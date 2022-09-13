@@ -16,6 +16,7 @@
     	empty($_POST['idiomasdominados']) || 
     	empty($_POST['periodoescolar']) || 
     	empty($_POST['campusreceptor']) ||
+      	empty($_POST['fecha_solicitud']) || 
     	empty($_POST['unidadreceptora'])){
     	mysqli_close($con);
         PantallaError("../public/assets/UABC_crop.png","ERROR AL SOLICITAR LA MOVILIDAD","Uno o más campos del formulario no fueron completados, para solicitar la movilidad es necesario llenar todos los campos del formulario",0);
@@ -55,11 +56,12 @@
     $unit_sending_country = "'" . mysqli_real_escape_string($con, $_POST['paisorigen']) . "'";
     $unit_sending_state = "'" . mysqli_real_escape_string($con, $_POST['entidademisora']) . "'";
     $unit_sending_language = "'" . mysqli_real_escape_string($con, $_POST['idiomasdominados']) . "'";
+    $date_solicitud = "'" . mysqli_real_escape_string($con, $_POST['fecha_solicitud']) . "'";
     $type = "'" . mysqli_real_escape_string($con, $_POST['tipomovilidad']) . "'";
 
     $sql = "INSERT INTO movilidad_academica_entrada_temporal (VISITANTE_ID, PERIODO, CAMPUS_ID, UNIDAD_ID, UE, UE_PAIS, UE_ENTIDAD, 
     UE_IDIOMA, TMA_ID, ESTADO) VALUES (${id}, ${period}, ${campus_code}, ${unit_code}, ${unit_sending_name}, ${unit_sending_country}, ${unit_sending_state}, 
-    ${unit_sending_language}, ${type}, 1)";
+    ${unit_sending_language}, ${date_solicitud}, ${type}, 1)";
 
     //si todo sale bien avisamos al usuario del resultado
     if (mysqli_query($con, $sql)) {

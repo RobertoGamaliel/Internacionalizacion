@@ -25,6 +25,7 @@
     	empty($_POST['finan_monto']) || 
     	empty($_POST['fecha_inicial']) || 
     	empty($_POST['fecha_terminal']) || 
+      	empty($_POST['fecha_solicitud']) || 
     	empty($_POST['periodo'])){
     	mysqli_close($con);
         PantallaError("../public/assets/UABC_crop.png","ERROR AL SOLICITAR LA MOVILIDAD","Uno o más campos del formulario no fueron completados, para solicitar la movilidad es necesario llenar todos los campos del formulario",0);
@@ -78,6 +79,7 @@
     $finan_id = mysqli_real_escape_string($con, $_POST['finan_recibio']);
     $finan_val = mysqli_real_escape_string($con, $_POST['finan_monto']);
     $date_start = "'" . mysqli_real_escape_string($con, $_POST['fecha_inicial']) . "'";
+    $date_solicitud = "'" . mysqli_real_escape_string($con, $_POST['fecha_solicitud']) . "'";
     $date_end = "'" . mysqli_real_escape_string($con, $_POST['fecha_terminal']) . "'";
    	
     //armamos la sentencia sql de inserción
@@ -87,13 +89,13 @@
     	CAMPUS_ID, CAMPUS_DESC, UNIDAD_ID, UNIDAD, NIVEL_ID,
     	PROGRAMA_ID, PROGRAMA_DESC, AREA_ID, AREA, UNID,
     	UNID_PAIS, UNID_ENTIDAD, UNID_IDIOMA, FINAN_ID, FINAN_VAL,
-    	DATE_START, DATE_END) VALUES (
+    	DATE_START, DATE_END, DATE_SOLICITUD) VALUES (
     	${matricula}, ${estudiante}, ${apellido1}, ${apellido2}, ${sexo}, 
     	${discap}, ${hIndigena}, ${oIndigena}, ${periodo_id}, ${periodo}, 
     	${campus_id}, ${campus_desc}, ${unidad_id}, ${facultad}, ${nivel_id}, 
     	${programa_id}, ${programa_desc}, ${area_id}, ${area}, ${unid},
     	${unid_pais}, ${unid_entidad}, ${unid_idioma}, ${finan_id}, ${finan_val},
-    	${date_start}, ${date_end})";          
+    	${date_start}, ${date_end}, ${date_solicitud)";          
 
     //si la sentencia se ejecuta correctamente avisamos al susuario
     if (mysqli_query($con, $insercion)) {

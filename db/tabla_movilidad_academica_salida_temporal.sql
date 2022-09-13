@@ -10,6 +10,7 @@ CREATE TABLE `movilidad_academica_salida_temporal` (
   `UR_IDIOMA` varchar(45) NOT NULL COMMENT 'Idioma de la unidad receptora',
   `TMA_ID` tinyint unsigned NOT NULL COMMENT 'Clave del tipo de movilidad académica (1-Docencia; 2-Estancias Sabáticas; 3-Estancia de Investigación)',
   `ESTADO` tinyint unsigned NOT NULL COMMENT '1 = en espera de aprovación, 2 = rechazado',
+  `DATE_SOLICITUD` date NOT NULL COMMENT 'Fecha de solicitud de movilidad.',
   PRIMARY KEY (`ID`),
   KEY `EMPLEADO_ID` (`EMPLEADO_ID`),
   FOREIGN KEY (`EMPLEADO_ID`) REFERENCES `academicos_salida` (`EMPLEADO_ID`)

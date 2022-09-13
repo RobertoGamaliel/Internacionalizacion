@@ -33,6 +33,7 @@
     	empty($_POST['finan_monto']) || 
     	empty($_POST['fecha_inicial']) || 
     	empty($_POST['fecha_terminal']) || 
+      	empty($_POST['fecha_solicitud']) ||
     	empty($_POST['periodo'])){
     	mysqli_close($con);
         PantallaError("../public/assets/UABC_crop.png","ERROR AL SOLICITAR LA MOVILIDAD","Uno o más campos del formulario no fueron completados, para solicitar la movilidad es necesario llenar todos los campos del formulario",0);
@@ -83,6 +84,7 @@
     $finan_id = mysqli_real_escape_string($con, $_POST['finan_recibio']);
     $finan_val = mysqli_real_escape_string($con, $_POST['finan_monto']);
     $date_start = "'" . mysqli_real_escape_string($con, $_POST['fecha_inicial']) . "'";
+    $date_solicitud = "'" . mysqli_real_escape_string($con, $_POST['fecha_solicitud']) . "'";
     $date_end = "'" . mysqli_real_escape_string($con, $_POST['fecha_terminal']) . "'";
     
     //armamos la sentencia sql para insertar la movilidad
@@ -95,7 +97,7 @@
         ${id}, ${nombre}, ${apellido1}, ${apellido2}, ${sexo}, ${discap}, ${hIndigena},
         ${oIndigena}, ${periodo_id}, ${periodo}, ${campus_id}, ${campus}, ${facultad_id}, ${facultad},
         ${nivel_id}, ${programa_id}, ${programa}, ${area_id}, ${area}, ${unid},${unid_pais}, 
-        ${unid_entidad}, ${unid_idioma}, ${finan_id}, ${finan_val}, ${date_start}, ${date_end})";
+        ${unid_entidad}, ${unid_idioma}, ${finan_id}, ${finan_val}, ${date_start}, ${date_end}), ${date_solicitud}";
 
     if (mysqli_query($con, $sql)) {
         mysqli_close($con);

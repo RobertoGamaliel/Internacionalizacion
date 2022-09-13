@@ -26,6 +26,7 @@ CREATE TABLE `intercambio_estudiantil_salida_temporal` (
   `FINAN_VAL` mediumint unsigned NOT NULL,
   `DATE_START` date NOT NULL COMMENT 'Fecha de inicio del intercambio ',
   `DATE_END` date NOT NULL COMMENT 'Fecha de término del intercambio',
+  `DATE_SOLICITUD` date NOT NULL COMMENT 'Fecha de solicitud de movilidad.',
   PRIMARY KEY (`ESTUDIANTE_ID`),
   UNIQUE KEY `ESTUDIANTE_ID_UNIQUE` (`ESTUDIANTE_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
