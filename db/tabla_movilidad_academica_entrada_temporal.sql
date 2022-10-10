@@ -13,5 +13,5 @@ CREATE TABLE `movilidad_academica_entrada_temporal` (
   `DATE_SOLICITUD` date NOT NULL COMMENT 'Fecha de solicitud de movilidad.',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `VISITANTE_ID_UNIQUE` (`ID`),
-  KEY `VISITANTE_ID` (`VISITANTE_ID`), FOREIGN KEY (`VISITANTE_ID`) REFERENCES `academicos_entrada` (`VISITANTE_ID`)
+  KEY `VISITANTE_ID` (`VISITANTE_ID`), FOREIGN KEY (`VISITANTE_ID`) REFERENCES `perfil_academicos_entrada` (`VISITANTE_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -25,7 +25,6 @@
     	empty($_POST['finan_monto']) || 
     	empty($_POST['fecha_inicial']) || 
     	empty($_POST['fecha_terminal']) || 
-      	empty($_POST['fecha_solicitud']) || 
     	empty($_POST['periodo'])){
     	mysqli_close($con);
         PantallaError("../public/assets/UABC_crop.png","ERROR AL SOLICITAR LA MOVILIDAD","Uno o más campos del formulario no fueron completados, para solicitar la movilidad es necesario llenar todos los campos del formulario",0);
@@ -34,7 +33,7 @@
 
     //Realizamos una cosnulta por el perfil del usuario
     $matricula = mysqli_real_escape_string($con, $_POST['matricula']);
-    $sql = "SELECT * FROM estudiantes_salida WHERE ESTUDIANTE_ID=${matricula}";
+    $sql = "SELECT * FROM perfil_estudiantes_salida WHERE ESTUDIANTE_ID=${matricula}";
 
     //Si ocurre un error al momento de hacer la consulta avisamos al usuario y detenemos la ejecución
     if (!($result = mysqli_query($con, $sql))){
@@ -79,9 +78,8 @@
     $finan_id = mysqli_real_escape_string($con, $_POST['finan_recibio']);
     $finan_val = mysqli_real_escape_string($con, $_POST['finan_monto']);
     $date_start = "'" . mysqli_real_escape_string($con, $_POST['fecha_inicial']) . "'";
-    $date_solicitud = "'" . mysqli_real_escape_string($con, $_POST['fecha_solicitud']) . "'";
     $date_end = "'" . mysqli_real_escape_string($con, $_POST['fecha_terminal']) . "'";
-   	
+   	$date_solicitud = "'" . date('Y-m-d') . "'";
     //armamos la sentencia sql de inserción
     $insercion = "INSERT INTO intercambio_estudiantil_salida_temporal (
     	ESTUDIANTE_ID, ESTUDIANTE, ESTUDIANTE_APELLIDO1, ESTUDIANTE_APELLIDO2, SEXO_ID, 
@@ -89,13 +87,13 @@
     	CAMPUS_ID, CAMPUS_DESC, UNIDAD_ID, UNIDAD, NIVEL_ID,
     	PROGRAMA_ID, PROGRAMA_DESC, AREA_ID, AREA, UNID,
     	UNID_PAIS, UNID_ENTIDAD, UNID_IDIOMA, FINAN_ID, FINAN_VAL,
-    	DATE_START, DATE_END, DATE_SOLICITUD) VALUES (
+    	DATE_START, DATE_END, DATE_SOLICITUD,ESTADO) VALUES (
     	${matricula}, ${estudiante}, ${apellido1}, ${apellido2}, ${sexo}, 
     	${discap}, ${hIndigena}, ${oIndigena}, ${periodo_id}, ${periodo}, 
     	${campus_id}, ${campus_desc}, ${unidad_id}, ${facultad}, ${nivel_id}, 
     	${programa_id}, ${programa_desc}, ${area_id}, ${area}, ${unid},
     	${unid_pais}, ${unid_entidad}, ${unid_idioma}, ${finan_id}, ${finan_val},
-    	${date_start}, ${date_end}, ${date_solicitud)";          
+    	${date_start}, ${date_end}, ${date_solicitud},1)";          
 
     //si la sentencia se ejecuta correctamente avisamos al susuario
     if (mysqli_query($con, $insercion)) {

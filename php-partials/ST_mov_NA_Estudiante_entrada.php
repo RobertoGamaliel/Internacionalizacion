@@ -16,7 +16,7 @@
         PantallaError("../public/assets/UABC_crop.png","ERROR AL SOLICITAR LA MOVILIDAD","Uno o más campos del formulario estan vacíos". mysqli_error($con),0);
         exit();
    }
-
+    
    if(empty($_POST['matricula']) || 
     	empty($_POST['nivel']) || 
     	empty($_POST['programa_clave']) || 
@@ -32,16 +32,17 @@
     	empty($_POST['finan_recibio']) || 
     	empty($_POST['finan_monto']) || 
     	empty($_POST['fecha_inicial']) || 
-    	empty($_POST['fecha_terminal']) || 
-      	empty($_POST['fecha_solicitud']) ||
+    	empty($_POST['fecha_terminal']) ||
     	empty($_POST['periodo'])){
+
     	mysqli_close($con);
         PantallaError("../public/assets/UABC_crop.png","ERROR AL SOLICITAR LA MOVILIDAD","Uno o más campos del formulario no fueron completados, para solicitar la movilidad es necesario llenar todos los campos del formulario",0);
         exit();
     }
 
+
    $id = mysqli_real_escape_string($con, $_POST['matricula']);
-   $sql = "SELECT * FROM estudiantes_entrada WHERE ESTUDIANTE_ID=${id}";
+   $sql = "SELECT * FROM perfil_estudiantes_entrada WHERE VISITANTE_ID=${id}";
 
    if (!($result = mysqli_query($con, $sql))){
         mysqli_close($con);
@@ -61,10 +62,10 @@
     
     $periodo = !empty($_POST['periodo']) ? "'" . mysqli_real_escape_string($con, $_POST['periodo']) . "'" : "NULL";
     $periodo_id= ($_POST['periodo']!="NULL" && strlen($_POST['periodo']) ===6)? substr($_POST['periodo'], 5,6):'0';
-    $nombre = "'".$misDatos["ESTUDIANTE"]."'";
-    $apellido1 = "'".$misDatos["ESTUDIANTE_APELLIDO1"]."'";
-    $apellido2 = "'".$misDatos["ESTUDIANTE_APELLIDO2"]."'";
-    $sexo = $misDatos["SEXO"];
+    $nombre = "'".$misDatos["VISITANTE"]."'";
+    $apellido1 = "'".$misDatos["VISITANTE_APELLIDO1"]."'";
+    $apellido2 = "'".$misDatos["VISITANTE_APELLIDO2"]."'";
+    $sexo = $misDatos["SEXO_ID"];
     $discap = $misDatos["DISCAPACIDAD"];
     $hIndigena = $misDatos["HABLANTE_INDIGENA"];
     $oIndigena = $misDatos["ORIGEN_INDIGENA"];
@@ -84,20 +85,20 @@
     $finan_id = mysqli_real_escape_string($con, $_POST['finan_recibio']);
     $finan_val = mysqli_real_escape_string($con, $_POST['finan_monto']);
     $date_start = "'" . mysqli_real_escape_string($con, $_POST['fecha_inicial']) . "'";
-    $date_solicitud = "'" . mysqli_real_escape_string($con, $_POST['fecha_solicitud']) . "'";
     $date_end = "'" . mysqli_real_escape_string($con, $_POST['fecha_terminal']) . "'";
-    
+    date_default_timezone_set('UTC');
+    $date_solicitud = "'" . date('Y-m-d') . "'";
     //armamos la sentencia sql para insertar la movilidad
     $sql = "INSERT INTO intercambio_estudiantil_entrada_temporal(
         ESTUDIANTE_ID, ESTUDIANTE, ESTUDIANTE_APELLIDO1, ESTUDIANTE_APELLIDO2, SEXO_ID, DISCAPACIDAD, HABLANTE_INDIGENA,
         ORIGEN_INDIGENA, PERIODO_ID, PERIODO, CAMPUS_ID, CAMPUS_DESC, UNIDAD_ID, UNIDAD,
         NIVEL_ID, PROGRAMA_ID, PROGRAMA_DESC, AREA_ID, AREA, UNID, UNID_PAIS,
-        UNID_ENTIDAD, UNID_IDIOMA, FINAN_ID, FINAN_VAL, DATE_START, DATE_END) 
+        UNID_ENTIDAD, UNID_IDIOMA, FINAN_ID, FINAN_VAL, DATE_START, DATE_END,DATE_SOLICITUD,ESTADO) 
         VALUES(
         ${id}, ${nombre}, ${apellido1}, ${apellido2}, ${sexo}, ${discap}, ${hIndigena},
         ${oIndigena}, ${periodo_id}, ${periodo}, ${campus_id}, ${campus}, ${facultad_id}, ${facultad},
         ${nivel_id}, ${programa_id}, ${programa}, ${area_id}, ${area}, ${unid},${unid_pais}, 
-        ${unid_entidad}, ${unid_idioma}, ${finan_id}, ${finan_val}, ${date_start}, ${date_end}), ${date_solicitud}";
+        ${unid_entidad}, ${unid_idioma}, ${finan_id}, ${finan_val}, ${date_start}, ${date_end}, ${date_solicitud}, 1)";
 
     if (mysqli_query($con, $sql)) {
         mysqli_close($con);

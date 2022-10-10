@@ -28,5 +28,6 @@ CREATE TABLE `intercambio_estudiantil_entrada_temporal` (
   `DATE_START` date NOT NULL COMMENT 'Fecha de inicio del intercambio ',
   `DATE_END` date NOT NULL COMMENT 'Fecha de término del intercambio',
   `DATE_SOLICITUD` date NOT NULL COMMENT 'Fecha de solicitud de movilidad.',
+  `ESTADO` tinyint NOT NULL COMMENT 'Estado de solicitud de movilidad. 1= solicitado, 2= rechazado',
   
    PRIMARY KEY (`ID`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

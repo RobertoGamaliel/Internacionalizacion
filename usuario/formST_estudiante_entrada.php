@@ -1,4 +1,4 @@
-<form action="../php-partials/ST_mov_NA_Estudiante_entrada.phpp" method="POST" autocomplete="off">
+<form action="../php-partials/ST_mov_NA_Estudiante_entrada.php" method="POST" autocomplete="off">
 	<div class="row mb-3">
 		<label for="matricula" class="col-sm-3 col-form-label" style="text-align: right;">ID O MATRICULA</label>
 		<div class="col-sm-6">

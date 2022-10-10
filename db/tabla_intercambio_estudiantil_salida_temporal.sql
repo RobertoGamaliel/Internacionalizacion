@@ -1,4 +1,5 @@
 CREATE TABLE `intercambio_estudiantil_salida_temporal` (
+  `ID` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'Clave de identificación de la movilidad',
   `ESTUDIANTE_ID` int unsigned NOT NULL COMMENT 'Clave de identificación del estudiante (matricula)',
   `ESTUDIANTE` varchar(45) NOT NULL COMMENT 'Nombre estudiante',
   `ESTUDIANTE_APELLIDO1` varchar(45) NOT NULL COMMENT 'Apellido paterno del estudiante',
@@ -27,6 +28,9 @@ CREATE TABLE `intercambio_estudiantil_salida_temporal` (
   `DATE_START` date NOT NULL COMMENT 'Fecha de inicio del intercambio ',
   `DATE_END` date NOT NULL COMMENT 'Fecha de término del intercambio',
   `DATE_SOLICITUD` date NOT NULL COMMENT 'Fecha de solicitud de movilidad.',
-  PRIMARY KEY (`ESTUDIANTE_ID`),
-  UNIQUE KEY `ESTUDIANTE_ID_UNIQUE` (`ESTUDIANTE_ID`)
+  `ESTADO` tinyint NOT NULL COMMENT 'Estado de solicitud de movilidad. 1= solicitado, 2= rechazado',
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ESTUDIANTE_ID_UNIQUE` (`ID`),
+  KEY `ESTUDIANTE_ID` (`ESTUDIANTE_ID`), FOREIGN KEY (`ESTUDIANTE_ID`) REFERENCES `perfil_estudiantes_salida` (`ESTUDIANTE_ID`)
+  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

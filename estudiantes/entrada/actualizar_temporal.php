@@ -1,30 +1,20 @@
 <?php
 require_once "../../php-partials/auth.php";
 
-if($_SESSION['admin']===10  || $_SESSION['admin']===4){
+if($_SESSION['admin'] < 1 || $_SESSION['admin'] > 5){
 	include("../../Pantalla_Error.php");
 	PantallaError("../../public/assets/UABC_crop.png","LO SENTIMOS, PERO USTED NO PUEDE ESTAR EN ESTA PAGINA","No cuenta con los permisos necesarios para acceder a esta página.",2);
 	exit();
-} else if($_SESSION['admin']<=0||$_SESSION['admin']>=6){
-	include("../../Pantalla_Error.php");
-	PantallaError("../../public/assets/UABC_crop.png","LO SENTIMOS, PERO NO SE RECONOCEN SUS CREDENCIALES","El usuario con el que esta ingresando no tiene autorización para acceder al sistema de internacionalización.",2);
-	exit();
-}
+} 
 
-include "../../php-partials/connect.php";
-
-$sql = "SELECT * FROM intercambio_estudiantil_entrada_temporal WHERE ESTUDIANTE_ID = ${_GET["id"]}";
-//$query = mysqli_query($con, $sql);
-//$res = mysqli_fetch_array($query);
-
-if ($query = mysqli_query($con, $sql)) {
-	$res = mysqli_fetch_array($query);
-} else {
-	echo "ERROR: Could not able to execute $sql. " . mysqli_error($con);
-}
-mysqli_close($con);
-
+include "../../querys/querysAdmins.php";
+$query = queryRegister(
+	'intercambio_estudiantil_entrada_temporal',
+	'ESTUDIANTE_ID',
+	$_GET["id"]);
+$res = mysqli_fetch_array($query);
 ?>
+
 <!doctype html>
 	<html lang="en">
 
@@ -53,7 +43,7 @@ mysqli_close($con);
 
 		<!-- SUBMENU COLAPSABLE -->
 		<div class="wrapper d-flex align-items-stretch">
-			<?php include("lateralEstudiantesEntrada.php") ?>
+			<!--?php include("lateralEstudiantesEntrada.php") ?-->
 			
 			<!-- Page Content  -->
 			<div id="content" class="p-4 p-md-5 pt-5">
@@ -61,34 +51,28 @@ mysqli_close($con);
 				<!-- NAV BAR  -->
 				<?php
 				require("../../Estaticos.php");
-				navVar("Sistema de Internacionalización > Estudiantes > Visitantes > Autorregistrado","../../public/assets/UABC_crop.png")
+				navVar("Sistema de Internacionalización > Estudiantes > Visitantes > Solicitud de movilidad","../../public/assets/UABC_crop.png")
 				?>
-
 
 				<div class="container">
 
-					<form id="formulario" action="../../php-partials/self_registration.php" method="post" autocomplete="off">
+					<form id="formulario" action="../../php-partials/authorizeRequestStudentVisit.php" method="POST" autocomplete="off">
+						<?php if($_SESSION['admin']!=4){ ?>
+						<div class="d-flex row align-items-centeer justify-content-center align-self-stretch ">
 
-						div class="d-flex row align-items-centeer align-self-stretch ">
-						<div class="col-sm-4">
-							<div class="d-flex justify-content-center p-1">
-								<button type="button" class="btn btn-outline-primary" id="btn_activar_edicion" <?php if ($_SESSION["admin"] == 4) echo "disabled"; ?>>Editar</button>
+							<div class="col-sm-4">
+								<div class="d-flex justify-content-center p-1">
+									<button type="submit" class="btn btn-outline-primary" name="btn_aplicar_entrada" id="btn_aplicarCambios1" onclick="return confirmarAplicarCambios()" >Aceptar solicitud</button>
+								</div>
+							</div>
+
+							<div class="col-sm-4">
+								<div class="d-flex justify-content-center p-1">
+									<button type="button" class="btn btn-danger" name="btn_eliminar" id="btn_eliminar" onclick="return confirmarBorrar()" <?php if ($_SESSION["admin"] == 4) echo "disabled"; ?>>Eliminar solicitud</button>
+								</div>
 							</div>
 						</div>
-
-						<div class="col-sm-4">
-							<div class="d-flex justify-content-center p-1">
-								<button type="submit" class="btn btn-outline-primary" name="btn_aplicar_entrada" id="btn_aplicarCambios1" onclick="return confirmarAplicarCambios()" disabled>Aceptar Autorregistro</button>
-							</div>
-						</div>
-
-						<div class="col-sm-4">
-							<div class="d-flex justify-content-center p-1">
-								<button type="button" class="btn btn-danger" name="btn_eliminar" id="btn_eliminar" onclick="return confirmarBorrar()" <?php if ($_SESSION["admin"] == 4) echo "disabled"; ?>>Eliminar</button>
-							</div>
-						</div>
-					</div>
-
+					<?php } ?>
 					<hr />
 
 					<div class="row mb-3 justify-content-md-center">
@@ -105,28 +89,28 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="paterno" class="col-sm-3 col-form-label" style="text-align: right;">Apellido Paterno</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="paterno" id="paterno" value="<?php echo $res["ESTUDIANTE_APELLIDO1"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="paterno" id="paterno" value="<?php echo $res["ESTUDIANTE_APELLIDO1"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="materno" class="col-sm-3 col-form-label" style="text-align: right;">Apellido Materno</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="materno" id="materno" value="<?php echo $res["ESTUDIANTE_APELLIDO2"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="materno" id="materno" value="<?php echo $res["ESTUDIANTE_APELLIDO2"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="nombre" class="col-sm-3 col-form-label" style="text-align: right;">Nombre</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="nombre" id="nombre" value="<?php echo $res["ESTUDIANTE"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="nombre" id="nombre" value="<?php echo $res["ESTUDIANTE"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="sexo" class="col-sm-3 col-form-label" style="text-align: right;">Sexo</label>
 						<div class="col-sm-6">
-							<select class="form-control border border-secondary" name="sexo" id="sexo" disabled>
+							<select class="form-control border border-secondary" name="sexo" id="sexo" >
 								<option value="" <?php if ($res["SEXO_ID"] == "") echo "selected"; ?>>----------</option>
 								<option value="1" <?php if ($res["SEXO_ID"] == "1") echo "selected"; ?>>Femenino</option>
 								<option value="2" <?php if ($res["SEXO_ID"] == "2") echo "selected"; ?>>Masculino</option>
@@ -138,7 +122,7 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="discapacidad" class="col-sm-3 col-form-label" style="text-align: right;">Discapacidad</label>
 						<div class="col-sm-6">
-							<select class="form-control border border-secondary" name="discapacidad" id="discapacidad" disabled>
+							<select class="form-control border border-secondary" name="discapacidad" id="discapacidad" >
 								<option value="" <?php if ($res["DISCAPACIDAD"] == "") echo "selected"; ?>>----------</option>
 								<option value="1" <?php if ($res["DISCAPACIDAD"] == "1") echo "selected"; ?>>Sí</option>
 								<option value="2" <?php if ($res["DISCAPACIDAD"] == "2") echo "selected"; ?>>No</option>
@@ -149,7 +133,7 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="lengua_indigena" class="col-sm-3 col-form-label" style="text-align: right;">Lengua Indígena</label>
 						<div class="col-sm-6">
-							<select class="form-control border border-secondary" name="lengua_indigena" id="lengua_indigena" disabled>
+							<select class="form-control border border-secondary" name="lengua_indigena" id="lengua_indigena" >
 								<option value="" <?php if ($res["HABLANTE_INDIGENA"] == "") echo "selected"; ?>>----------</option>
 								<option value="1" <?php if ($res["HABLANTE_INDIGENA"] == "1") echo "selected"; ?>>Sí</option>
 								<option value="2" <?php if ($res["HABLANTE_INDIGENA"] == "2") echo "selected"; ?>>No</option>
@@ -160,7 +144,7 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="origen_indigena" class="col-sm-3 col-form-label" style="text-align: right;">Origen Indígena</label>
 						<div class="col-sm-6">
-							<select class="form-control border border-secondary" name="origen_indigena" id="origen_indigena" disabled>
+							<select class="form-control border border-secondary" name="origen_indigena" id="origen_indigena" >
 								<option value="" <?php if ($res["ORIGEN_INDIGENA"] == "") echo "selected"; ?>>----------</option>
 								<option value="1" <?php if ($res["ORIGEN_INDIGENA"] == "1") echo "selected"; ?>>Sí</option>
 								<option value="2" <?php if ($res["ORIGEN_INDIGENA"] == "2") echo "selected"; ?>>No</option>
@@ -177,14 +161,14 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="campus_clave" class="col-sm-3 col-form-label" style="text-align: right;">Clave</label>
 						<div class="col-sm-6">
-							<input type="number" min="0" max="9" class="form-control border border-secondary" name="campus_clave" id="campus_clave" value="<?php echo $res["CAMPUS_ID"]; ?>" disabled>
+							<input type="number" min="0" max="9" class="form-control border border-secondary" name="campus_clave" id="campus_clave" value="<?php echo $res["CAMPUS_ID"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="campus_nombre" class="col-sm-3 col-form-label" style="text-align: right;">Nombre</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="campus_nombre" id="campus_nombre" value="<?php echo $res["CAMPUS_DESC"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="campus_nombre" id="campus_nombre" value="<?php echo $res["CAMPUS_DESC"]; ?>" >
 						</div>
 					</div>
 
@@ -197,14 +181,14 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="unidad_clave" class="col-sm-3 col-form-label" style="text-align: right;">Clave</label>
 						<div class="col-sm-6">
-							<input type="number" min="0" max="999" class="form-control border border-secondary" name="unidad_clave" id="unidad_clave" value="<?php echo $res["UNIDAD_ID"]; ?>" disabled>
+							<input type="number" min="0" max="999" class="form-control border border-secondary" name="unidad_clave" id="unidad_clave" value="<?php echo $res["UNIDAD_ID"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="unidad_nombre" class="col-sm-3 col-form-label" style="text-align: right;">Nombre</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="unidad_nombre" id="unidad_nombre" value="<?php echo $res["UNIDAD"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="unidad_nombre" id="unidad_nombre" value="<?php echo $res["UNIDAD"]; ?>" >
 						</div>
 					</div>
 
@@ -213,14 +197,14 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="periodo" class="col-sm-3 col-form-label" style="text-align: right;">Periodo Escolar</label>
 						<div class="col-sm-6">
-							<input type="number" min="0" max="99999" class="form-control border border-secondary" name="periodo" id="periodo" value="<?php echo $res["PERIODO_ID"]; ?>" disabled>
+							<input type="number" min="0" max="99999" class="form-control border border-secondary" name="periodo" id="periodo" value="<?php echo $res["PERIODO_ID"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="nivel" class="col-sm-3 col-form-label" style="text-align: right;">Nivel de Estudios</label>
 						<div class="col-sm-6">
-							<select class="form-control border border-secondary" name="nivel" id="nivel" disabled>
+							<select class="form-control border border-secondary" name="nivel" id="nivel" >
 								<option value="" <?php if ($res["NIVEL_ID"] == "") echo "selected"; ?>>----------</option>
 								<option value="1" <?php if ($res["NIVEL_ID"] == "1") echo "selected"; ?>>Licenciatura</option>
 								<option value="2" <?php if ($res["NIVEL_ID"] == "2") echo "selected"; ?>>Especialidad</option>
@@ -241,28 +225,28 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="unidad_emisora_nombre" class="col-sm-3 col-form-label" style="text-align: right;">Nombre</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="unidad_emisora_nombre" id="unidad_emisora_nombre" value="<?php echo $res["UNID"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="unidad_emisora_nombre" id="unidad_emisora_nombre" value="<?php echo $res["UNID"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="unidad_emisora_pais" class="col-sm-3 col-form-label" style="text-align: right;">País</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="unidad_emisora_pais" id="unidad_emisora_pais" value="<?php echo $res["UNID_PAIS"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="unidad_emisora_pais" id="unidad_emisora_pais" value="<?php echo $res["UNID_PAIS"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="unidad_emisora_entidad" class="col-sm-3 col-form-label" style="text-align: right;">Entidad</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="unidad_emisora_entidad" id="unidad_emisora_entidad" value="<?php echo $res["UNID_ENTIDAD"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="unidad_emisora_entidad" id="unidad_emisora_entidad" value="<?php echo $res["UNID_ENTIDAD"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="unidad_emisora_idioma" class="col-sm-3 col-form-label" style="text-align: right;">Idioma</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="unidad_emisora_idioma" id="unidad_emisora_idioma" value="<?php echo $res["UNID_IDIOMA"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="unidad_emisora_idioma" id="unidad_emisora_idioma" value="<?php echo $res["UNID_IDIOMA"]; ?>" >
 						</div>
 					</div>
 
@@ -276,14 +260,14 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="programa_clave" class="col-sm-3 col-form-label" style="text-align: right;">Clave</label>
 						<div class="col-sm-6">
-							<input type="number" min="0" max="999" class="form-control border border-secondary" name="programa_clave" id="programa_clave" value="<?php echo $res["PROGRAMA_ID"]; ?>" disabled>
+							<input type="number" min="0" max="999" class="form-control border border-secondary" name="programa_clave" id="programa_clave" value="<?php echo $res["PROGRAMA_ID"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="programa_nombre" class="col-sm-3 col-form-label" style="text-align: right;">Nombre</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="programa_nombre" id="programa_nombre" value="<?php echo $res["PROGRAMA_DESC"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="programa_nombre" id="programa_nombre" value="<?php echo $res["PROGRAMA_DESC"]; ?>" >
 						</div>
 					</div>
 
@@ -294,14 +278,14 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="area_clave" class="col-sm-3 col-form-label" style="text-align: right;">Clave</label>
 						<div class="col-sm-6">
-							<input type="number" min="0" max="9" class="form-control border border-secondary" name="area_clave" id="area_clave" value="<?php echo $res["AREA_ID"]; ?>" disabled>
+							<input type="number" min="0" max="9" class="form-control border border-secondary" name="area_clave" id="area_clave" value="<?php echo $res["AREA_ID"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="area_nombre" class="col-sm-3 col-form-label" style="text-align: right;">Nombre</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control border border-secondary" name="area_nombre" id="area_nombre" value="<?php echo $res["AREA"]; ?>" disabled>
+							<input type="text" class="form-control border border-secondary" name="area_nombre" id="area_nombre" value="<?php echo $res["AREA"]; ?>" >
 						</div>
 					</div>
 
@@ -314,7 +298,7 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="finan_recibio" class="col-sm-3 col-form-label" style="text-align: right;">¿Recibió?</label>
 						<div class="col-sm-6">
-							<select class="form-control border border-secondary" name="finan_recibio" id="finan_recibio" disabled>
+							<select class="form-control border border-secondary" name="finan_recibio" id="finan_recibio" >
 								<option value="" <?php if ($res["FINAN_ID"] == "") echo "selected"; ?>>----------</option>
 								<option value="1" <?php if ($res["FINAN_ID"] == "1") echo "selected"; ?>>Sí</option>
 								<option value="2" <?php if ($res["FINAN_ID"] == "2") echo "selected"; ?>>No</option>
@@ -325,7 +309,7 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="finan_monto" class="col-sm-3 col-form-label" style="text-align: right;">Monto</label>
 						<div class="col-sm-6">
-							<input type="number" min="0" max="99999" class="form-control border border-secondary" name="finan_monto" id="finan_monto" value="<?php echo $res["FINAN_VAL"]; ?>" disabled>
+							<input type="number" min="0" max="99999" class="form-control border border-secondary" name="finan_monto" id="finan_monto" value="<?php echo $res["FINAN_VAL"]; ?>" >
 						</div>
 					</div>
 
@@ -338,22 +322,23 @@ mysqli_close($con);
 					<div class="row mb-3">
 						<label for="fecha_inicial" class="col-sm-3 col-form-label" style="text-align: right;">Inicial</label>
 						<div class="col-sm-6">
-							<input type="date" class="form-control border border-secondary" name="fecha_inicial" id="fecha_inicial" value="<?php echo $res["DATE_START"]; ?>" disabled>
+							<input type="date" class="form-control border border-secondary" name="fecha_inicial" id="fecha_inicial" value="<?php echo $res["DATE_START"]; ?>" >
 						</div>
 					</div>
 
 					<div class="row mb-3">
 						<label for="fecha_terminal" class="col-sm-3 col-form-label" style="text-align: right;">Terminal</label>
 						<div class="col-sm-6">
-							<input type="date" class="form-control border border-secondary" name="fecha_terminal" id="fecha_terminal" value="<?php echo $res["DATE_END"]; ?>" disabled>
+							<input type="date" class="form-control border border-secondary" name="fecha_terminal" id="fecha_terminal" value="<?php echo $res["DATE_END"]; ?>" >
 						</div>
 					</div>
 
 					<hr />
-
+					<?php if($_SESSION['admin']!=4) {?>
 					<div class="row mb-3 justify-content-md-center">
-						<button type="submit" class="btn btn-outline-primary" name="btn_aplicar_entrada" id="btn_aplicarCambios2" onclick="return confirmarAplicarCambios()" disabled>Aceptar Autorregistro</button>
+						<button type="submit" class="btn btn-outline-primary" name="btn_aplicar_entrada" id="btn_aplicarCambios2" onclick="return confirmarAplicarCambios()" >Aceptar solicitud</button>
 					</div>
+					<?php } ?>
 				</form>
 				
 
@@ -373,57 +358,6 @@ mysqli_close($con);
 	<script>
 		const btn_activar_edicion = document.getElementById("btn_activar_edicion");
 
-		btn_activar_edicion.addEventListener("click", () => {
-
-			if (document.getElementById("paterno").disabled === true) {
-
-				//document.getElementById("identificador").disabled = false;
-				document.getElementById("paterno").disabled = false;
-				document.getElementById("materno").disabled = false;
-				document.getElementById("nombre").disabled = false;
-				document.getElementById("sexo").disabled = false;
-				document.getElementById("discapacidad").disabled = false;
-				document.getElementById("lengua_indigena").disabled = false;
-				document.getElementById("origen_indigena").disabled = false;
-
-				document.getElementById("campus_clave").disabled = false;
-				document.getElementById("campus_nombre").disabled = false;
-
-				document.getElementById("unidad_clave").disabled = false;
-				document.getElementById("unidad_nombre").disabled = false;
-
-				document.getElementById("periodo").disabled = false;
-				document.getElementById("nivel").disabled = false;
-
-				document.getElementById("unidad_emisora_nombre").disabled = false;
-				document.getElementById("unidad_emisora_pais").disabled = false;
-				document.getElementById("unidad_emisora_entidad").disabled = false;
-				document.getElementById("unidad_emisora_idioma").disabled = false;
-
-				document.getElementById("programa_clave").disabled = false;
-				document.getElementById("programa_nombre").disabled = false;
-				document.getElementById("area_clave").disabled = false;
-				document.getElementById("area_nombre").disabled = false;
-
-				document.getElementById("finan_recibio").disabled = false;
-				document.getElementById("finan_monto").disabled = false;
-
-				document.getElementById("fecha_inicial").disabled = false;
-				document.getElementById("fecha_terminal").disabled = false;
-
-				document.getElementById("btn_aplicarCambios2").disabled = false;
-				document.getElementById("btn_aplicarCambios1").disabled = false;
-
-				btn_activar_edicion.classList = "btn btn-outline-dark";
-				btn_activar_edicion.innerHTML = "Descartar Cambios";
-
-			} else {
-				if (confirm('¿Estás seguro que quieres descartar los cambios que se han hecho?')) {
-					location.reload();
-				}
-			}
-		});
-
 		function show(shown, hidden) {
 			document.getElementById(shown).style.display = 'block';
 			document.getElementById(hidden).style.display = 'none';
@@ -431,8 +365,8 @@ mysqli_close($con);
 		}
 
 		function confirmarAplicarCambios() {
-			if (confirm('¿Estás seguro que quieres aplicar el autorregistro a las tablas principales?')) {
-				//document.getElementById("formulario").submit();
+			if (confirm('¿Autorizar esta solicitud de movilidad?')) {
+				document.getElementById("formulario").submit();
 			} else {
 				return false;
 			}

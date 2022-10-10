@@ -5,7 +5,7 @@
 			<input type="number" min="0" max="4294967295" class="form-control border border-secondary bg-light" placeholder="<?php echo $_SESSION['matricula']?>" name="identificador" id="identificador" value="<?php echo $_SESSION['matricula']?>" readonly required/>
 		</div>
 	</div>
-
+	
 	<div class="row mb-3">
 		<label for="tipomovilidad" class="col-sm-3 col-form-label" style="text-align: right;">Tipo de Movilidad</label>
 		<div class="col-sm-6">
@@ -61,7 +61,7 @@
 				
 			</select>
 		</div>
-	</div>
+	</div> 
 
 	<div class="row mb-3">
 		<label for="campusreceptor" class="col-sm-3 col-form-label" style="text-align: right;">Campus Receptor</label>

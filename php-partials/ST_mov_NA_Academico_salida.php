@@ -15,16 +15,15 @@
     	empty($_POST['entidadreceptora']) || 
     	empty($_POST['idiomasdominados']) || 
     	empty($_POST['periodoescolar']) || 
-    	empty($_POST['campusemiso']) || 
-    	empty($_POST['unidademisora']) ||
-	empty($_POST['fecha_solicitud'])){
+    	empty($_POST['campusemisor']) || 
+    	empty($_POST['unidademisora'])){
     	mysqli_close($con);
         PantallaError("../public/assets/UABC_crop.png","ERROR AL SOLICITAR LA MOVILIDAD","Uno o más campos del formulario no fueron completados, para solicitar la movilidad es necesario llenar todos los campos del formulario",0);
         exit();
     }
-
+    $id = $_POST['matricula'];
     //comprobamos que el usuario exista en la bd
-    $sql = "SELECT * FROM academicos_salida WHERE EMPLEADO_ID=${id}";
+    $sql = "SELECT * FROM perfil_academicos_salida WHERE EMPLEADO_ID=${id}";
 	if (!($result = mysqli_query($con, $sql))) {
         mysqli_close($con);
         PantallaError("../public/assets/UABC_crop.png","ERROR AL SOLICITAR LA MOVILIDAD","Se produjo un error al momento de procesar su solicitud, si el problema persiste contáctenos. Encontrará los teléfonos y correos para contactarnos en la página inicial". mysqli_error($con),0);
@@ -39,20 +38,19 @@
     }
  	
  	//limpieza de la inffromacion de los formularios
-    $campus_code = "'" . mysqli_real_escape_string($con, $_POST['campusemisor']) . "'";
-    $unit_code = "'" . mysqli_real_escape_string($con, $_POST['unidademisora']) . "'";
     $period = "'" . mysqli_real_escape_string($con, $_POST['periodoescolar']) . "'";
-    $unit_receiving_name = "'" . mysqli_real_escape_string($con, $_POST['unidadreceptora']) . "'";
-    $unit_receiving_country =  "'" . mysqli_real_escape_string($con, $_POST['paisreceptor']) . "'";
-    $unit_receiving_state = "'" . mysqli_real_escape_string($con, $_POST['entidadreceptora']) . "'";
-    $unit_receiving_language = "'" . mysqli_real_escape_string($con, $_POST['idiomasdominados']) . "'";
-    $date_solicitud = "'" . mysqli_real_escape_string($con, $_POST['fecha_solicitud']) . "'";
-    $type = "'" . mysqli_real_escape_string($con, $_POST['tipomovilidad']) . "'";
-
+    $campus_id = "'" . mysqli_real_escape_string($con, $_POST['campusemisor']) . "'";
+    $unit_id = "'" . mysqli_real_escape_string($con, $_POST['unidademisora']) . "'";
+    $ur = "'" . mysqli_real_escape_string($con, $_POST['unidadreceptora']) . "'";
+    $ur_country =  "'" . mysqli_real_escape_string($con, $_POST['paisreceptor']) . "'";
+    $ur_entity = "'" . mysqli_real_escape_string($con, $_POST['entidadreceptora']) . "'";
+    $ur_idiom = "'" . mysqli_real_escape_string($con, $_POST['idiomasdominados']) . "'";
+    $tma_id = "'" . mysqli_real_escape_string($con, $_POST['tipomovilidad']) . "'";
+    $date_solicitud = "'" . date('Y-m-d') . "'";
 
     $sql = "INSERT INTO movilidad_academica_salida_temporal (EMPLEADO_ID, PERIODO, CAMPUS_ID, UNIDAD_ID, UR, UR_PAIS, UR_ENTIDAD, 
-    UR_IDIOMA, TMA_ID, ESTADO) VALUES (${id}, ${period}, ${campus_code}, ${unit_code}, ${unit_receiving_name}, ${unit_receiving_country}, ${unit_receiving_state}, 
-    ${unit_receiving_language}, ${date_solicitud}, ${type}, 1)";
+    UR_IDIOMA, TMA_ID, ESTADO, DATE_SOLICITUD) VALUES (${id}, ${period}, ${campus_id}, ${unit_id}, ${ur}, ${ur_country}, ${ur_entity}, 
+    ${ur_idiom}, ${tma_id}, 1, ${date_solicitud})";
 
     if(mysqli_query($con, $sql)) {
         mysqli_close($con);

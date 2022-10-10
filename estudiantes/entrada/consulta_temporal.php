@@ -2,28 +2,18 @@
 
 require_once "../../php-partials/auth.php";
 
-if($_SESSION['admin']===10){
+if($_SESSION['admin']<=0||$_SESSION['admin']>=6){
     include("../../Pantalla_Error.php");
-    PantallaError("../../public/assets/UABC_crop.png","LO SENTIMOS, PERO USTED NO PUEDE ESTAR EN ESTA PAGINA","No cuenta con los permisos necesarios para acceder a esta página.",2);
-    exit();
-} else if($_SESSION['admin']<=0||$_SESSION['admin']>=6){
-    include("../../Pantalla_Error.php");
-    PantallaError("../../public/assets/UABC_crop.png","LO SENTIMOS, PERO NO SE RECONOCEN SUS CREDENCIALES","El usuario con el que esta ingresando no tiene autorización para acceder al sistema de internacionalización.",2);
+    PantallaError("../../public/assets/UABC_crop.png","ACCESO DENEGADO","El usuario con el que esta ingresando no tiene autorización para acceder a esta página.",2);
     exit();
 }
 
-include "../../php-partials/connect.php";
 
-$sql = "SELECT * FROM intercambio_estudiantil_entrada_temporal";
-//$query = mysqli_query($con, $sql);
-//$res = mysqli_fetch_array($query);
 
-if ($query = mysqli_query($con, $sql)) {
-	//$res = mysqli_fetch_array($query);
-} else {
-	echo "ERROR: Could not able to execute $sql. " . mysqli_error($con);
-}
-mysqli_close($con);
+include "../../querys/querysAdmins.php";
+if (!$query = requestStudentVisitor()) {
+	PantallaError("../../public/assets/UABC_crop.png","OCURRIÓ UN PROBLEMA","No fue posible acceder a los archivos.",2);
+} 
 
 ?>
 <!doctype html>
@@ -53,42 +43,69 @@ mysqli_close($con);
               require("../../Estaticos.php");
               navVar("Sistema de Internacionalización > Estudiantes > Visitantes > Consultar Autorregistrados","../../public/assets/UABC_crop.png")
             ?>
+
             <!-- zona scrollable par dispositivos de pantallas pequeñas -->
             <div class="d-flex flex-row justify-content-center align-items-center  align-self-stretch m-0 p-0 mb-5">
                 <div class="d-flex flex-column col-12 justify-content-center d-flex align-items-center m-2 p-0">
-                    <div class="overflow-auto align-self-stretch  m-0 p-0 ">
+                    <div class="overflow-auto align-self-stretch  m-0 p-0 " >
             			<!-- Tablas de Datos  -->
-            			<table id="tabla" class="table table-bordered table-hover" style="width:100%">
+            			<table id="tabla" class="table table-bordered table-hover" style="width:150%">
             				<thead>
             					<tr>
             						<th scope="col">ID</th>
+                                    <th scope="col">FECHA DE SOLICITUD</th>
+                                    <th scope="col">NOMBRE</th>
             						<th scope="col">APELLIDO PATERNO</th>
-            						<th scope="col">APELLIDO MATERNO</th>
-            						<th scope="col">NOMBRE</th>
-            						<th scope="col">NIVEL DE ESTUDIOS</th>
-                                    <th scope="col">PROGRAMA EDUCATIVO</th>
-                                    <th scope="col">UNIDAD EMISORA</th>
+                                    <th scope="col">APELLIDO MATERNO</th>
                                     <th scope="col">FECHA INICIO</th>
+                                    <th scope="col">FECHA FINAL</th>
+                                    <th scope="col">PERIODO</th>
+            						<th scope="col">NIVEL DE ESTUDIOS</th>
+                                    <th scope="col">PAIS EMISOR</th>
+                                    <th scope="col">UNIDAD EMISORA</th>
+                                    <th scope="col">ENTIDAD EMISORA</th>
+                                    <th scope="col">IDIOMA</th>
+                                    <th scope="col">CAMPUS RECEPTOR</th>
+                                    <th scope="col">FACULTAD RECEPTORA</th>
+                                    <th scope="col">PROGRAMA EDUCATIVO</th>
+                                    <th scope="col">MONTO FINANCIACIÓN</th>
+                                    <th scope="col">TIPO DE MONEDA</th>
+                                    <th scope="col">DISCAPACIDAD</th>
+                                    <th scope="col">LENGUA INDIGENA</th>
+                                    <th scope="col">ORIGEN INDIGENA</th>
             					</tr>
             				</thead>
             				<tbody>
-            					<?php while ($qq = mysqli_fetch_array($query)) { ?>
+            					<?php while ($qq = mysqli_fetch_array($query)) {?>
 
             						<tr>
             							<th scope="row"> <?php echo $qq["ESTUDIANTE_ID"]; ?> </th>
-            							<td> <?php echo $qq["ESTUDIANTE_APELLIDO1"]; ?> </td>
-            							<td> <?php echo $qq["ESTUDIANTE_APELLIDO2"]; ?> </td>
+                                        <td> <?php echo $qq["DATE_SOLICITUD"]; ?> </td>
             							<td> <?php echo $qq["ESTUDIANTE"]; ?> </td>
-            							<td>
+                                        <td> <?php echo $qq["ESTUDIANTE_APELLIDO1"]; ?> </td>
+                                        <td> <?php echo $qq["ESTUDIANTE_APELLIDO2"]; ?> </td>
+            							<td> <?php echo $qq["DATE_START"]; ?> </td>
+                                        <td> <?php echo $qq["DATE_END"]; ?> </td>
+                                        <td> <?php echo $qq["PERIODO"]; ?> </td>
                                             <!--Nivel de estudios-->
-                                            <?php if ($qq["NIVEL_ID"] == 1) echo "Licenciatura"; ?>
-                                            <?php if ($qq["NIVEL_ID"] == 2) echo "Especialidad"; ?>
-                                            <?php if ($qq["NIVEL_ID"] == 3) echo "Maestría"; ?>
-                                            <?php if ($qq["NIVEL_ID"] == 4) echo "Doctorado"; ?>
-                                        </td>
-            							<td> <?php echo $qq["PROGRAMA_DESC"]; ?> </td>
+                                        <td>   
+                                            <?php if ($qq["NIVEL_ID"] == 1) echo "Licenciatura"; 
+                                             else if ($qq["NIVEL_ID"] == 2) echo "Especialidad"; 
+                                             else if ($qq["NIVEL_ID"] == 3) echo "Maestría"; 
+                                             else if ($qq["NIVEL_ID"] == 4) echo "Doctorado"; ?>
+                                        <td> <?php echo $qq["UNID_PAIS"]; ?> </td>
                                         <td> <?php echo $qq["UNID"]; ?> </td>
-                                        <td> <?php echo $qq["DATE_START"]; ?> </td>
+                                        <td> <?php echo $qq["UNID_ENTIDAD"]; ?> </td>
+                                        <td> <?php echo $qq["UNID_IDIOMA"]; ?> </td>
+                                        <td> <?php echo $qq["CAMPUS_DESC"]; ?> </td>
+                                        <td> <?php echo $qq["UNIDAD"]; ?> </td>
+                                        <td> <?php echo $qq["PROGRAMA_DESC"]; ?> </td>
+                                        <td> <?php if($qq["FINAN_VAL"] >1) echo "$" . $qq["FINAN_VAL"];
+                                                    else echo "Sin financiación" ?> </td>
+                                        <td> <?php echo $qq["FINAN_ID"]; ?> </td>
+                                        <td> <?php echo $qq["DISCAPACIDAD"]; ?> </td>
+                                        <td> <?php echo $qq["HABLANTE_INDIGENA"]; ?> </td>
+                                        <td> <?php echo $qq["ORIGEN_INDIGENA"]; ?> </td>
 
             						</tr>
             					<?php } ?>
@@ -96,13 +113,26 @@ mysqli_close($con);
             				<tfoot>
             					<tr>
             						<th scope="col">ID</th>
-            						<th scope="col">APELLIDO PATERNO</th>
-            						<th scope="col">APELLIDO MATERNO</th>
-            						<th scope="col">NOMBRE</th>
-            						<th scope="col">NIVEL DE ESTUDIOS</th>
-                                    <th scope="col">PROGRAMA EDUCATIVO</th>
-                                    <th scope="col">UNIDAD EMISORA</th>
+                                    <th scope="col">FECHA DE SOLICITUD</th>
+                                    <th scope="col">NOMBRE</th>
+                                    <th scope="col">APELLIDO PATERNO</th>
+                                    <th scope="col">APELLIDO MATERNO</th>
                                     <th scope="col">FECHA INICIO</th>
+                                    <th scope="col">FECHA FINAL</th>
+                                    <th scope="col">PERIODO</th>
+                                    <th scope="col">NIVEL DE ESTUDIOS</th>
+                                    <th scope="col">PAIS EMISOR</th>
+                                    <th scope="col">UNIDAD EMISORA</th>
+                                    <th scope="col">ENTIDAD EMISORA</th>
+                                    <th scope="col">IDIOMA</th>
+                                    <th scope="col">CAMPUS RECEPTOR</th>
+                                    <th scope="col">FACULTAD RECEPTORA</th>
+                                    <th scope="col">PROGRAMA EDUCATIVO</th>
+                                    <th scope="col">MONTO FINANCIACIÓN</th>
+                                    <th scope="col">TIPO DE MONEDA</th>
+                                    <th scope="col">DISCAPACIDAD</th>
+                                    <th scope="col">LENGUA INDIGENA</th>
+                                    <th scope="col">ORIGEN INDIGENA</th>
             					</tr>
             				</tfoot>
             			</table>
