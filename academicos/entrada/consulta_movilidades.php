@@ -11,6 +11,12 @@ if($_SESSION['admin']===10){
     exit();
 }
 include "../../php-partials/connect.php";
+include "../../querys/querysAdmins,php";
+
+if(!$query  = requestAcadVisitor(){
+ PantallaError("../../public/assets/UABC_crop.png","OCURRIÓ UN PROBLEMA.","No fue posible acceder a los archivos.",2);
+    exit();
+}
 
 $sql = "SELECT * FROM movilidad_academica_entrada";
 //$query = mysqli_query($con, $sql);
