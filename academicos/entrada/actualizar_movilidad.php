@@ -171,13 +171,7 @@ mysqli_close($con);
 						</select>
 					</div>
 				</div>
-				<?php if($_SESSION['admin']===1|| $_SESSION['admin']===2 || $_SESSION['admin']===3|| $_SESSION['admin']===5){?>
-					<div class="d-flex flex-row justify-content-center align-items-center  align-self-stretch m-0 p-0 mb-3 mt-5">
-						<div class="d-flex flex-column col-12 justify-content-center d-flex align-items-center m-2 p-0">
-							<button type="button" class="btn btn-primary" id="btn_activar_edicion" <?php if (!$_SESSION["admin"]) echo "disabled"; ?>>Editar</button>
-						</div>					
-					</div>
-
+				<?php if($_SESSION['admin']!=4){?>
 					<div class="d-flex flex-row justify-content-center align-items-center  align-self-stretch m-0 p-0 mb-3 mt-0">
 						<div class="d-flex flex-column col-12 justify-content-center d-flex align-items-center m-2 p-0">
 							<button type="submit" class="btn btn-outline-primary" name="btn_aplicarCambios_movilidad_entrada" id="btn_aplicarCambios1" onclick="return confirmarAplicarCambios()">Aplicar Cambios</button>
@@ -186,7 +180,7 @@ mysqli_close($con);
 
 					<div class="d-flex flex-row justify-content-center align-items-center  align-self-stretch m-0 p-0 mb-3 mt-0">
 						<div class="d-flex flex-column col-12 justify-content-center d-flex align-items-center m-2 p-0">
-							<button type="reset" class="btn btn-danger" id="btn_eliminar" onclick="return confirmarBorrar()" <?php if (!$_SESSION["admin"]) echo "disabled"; ?>>Eliminar</button>
+							<button type="reset" class="btn btn-danger" id="btn_eliminar" onclick="return confirmarBorrar()" <?php if (!$_SESSION["admin"] == 4) echo "disabled"; ?>>Eliminar</button>
 						</div>					
 					</div>
 					
