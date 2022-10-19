@@ -65,12 +65,17 @@ mysqli_close($con);
                             <thead>
                                 <tr>
                                     <th scope="col">ID</th>
-                                    <th scope="col">MOVILIDAD_ID</th>
-                                    <th scope="col">País de Origen</th>
-                                    <th scope="col">Unidad Emisora</th>
-                                    <th scope="col">Entidad Emisora</th>
-                                    <th scope="col">Tipo de Movilidad</th>
-                                    <th scope="col">Periodo Escolar</th>
+				    <th scope="col">PERIODO ESCOLAR</th>
+				    <th scope="col">CAMPUS ID</th>
+				    <th scope="col">UNIDAD ID</th>
+                                    <th scope="col">PAÍS DE ORIGEN</th>
+                                    <th scope="col">UNIDAD EMISORA</th>
+                                    <th scope="col">ENTIDAD EMISORA</th>
+				    <th scope="col">IDIOMA</th>
+                                    <th scope="col">TIPO DE MOVILIDAD</th>
+				    <th scope="col">ESTADO</th>
+				    <th scope="col">FECHA DE LA SOLICITUD</th>
+                           
 
                                 </tr>
                             </thead>
@@ -81,16 +86,21 @@ mysqli_close($con);
 
                                         <th scope="row"> <?php echo $qq["VISITANTE_ID"]; ?> </th>
                                         <td> <?php echo $qq["ID"]; ?> </td>
+                                        <td> <?php echo $qq["PERIODO"]; ?> </td>
+                                        <td> <?php echo $qq["CAMPUS_ID"]; ?> </td>
+                                        <td> <?php echo $qq["UNIDAD_ID"]; ?> </td>
                                         <td> <?php echo $qq["UE_PAIS"]; ?> </td>
                                         <td> <?php echo $qq["UE"]; ?> </td>
                                         <td> <?php echo $qq["UE_ENTIDAD"]; ?> </td>
+                                        <td> <?php echo $qq["UE_IDIOMA"]; ?> </td>
                                         <td>
                                             <!-- Tipo de Movilidad -->
                                             <?php if ($qq["TMA_ID"] == '1') echo "Docencia" ?>
                                             <?php if ($qq["TMA_ID"] == '2') echo "Estancia Sabática"; ?>
                                             <?php if ($qq["TMA_ID"] == '3') echo "Estancia de Investigación"; ?>
                                         </td>
-                                        <td> <?php echo $qq["PERIODO_ID"]; ?> </td>
+                                        <td> <?php echo $qq["ESTADO"]; ?> </td>
+                                        <td> <?php echo $qq["DATE_SOLICITUD"]; ?> </td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
