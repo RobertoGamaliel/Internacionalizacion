@@ -19,14 +19,7 @@ if(!$query  = requestAcadVisitor(){
 }
 
 $sql = "SELECT * FROM movilidad_academica_entrada";
-//$query = mysqli_query($con, $sql);
-//$res = mysqli_fetch_array($query);
 
-if ($query = mysqli_query($con, $sql)) {
-    //$res = mysqli_fetch_array($query);
-} else {
-    echo "ERROR: Could not able to execute $sql. " . mysqli_error($con);
-}
 mysqli_close($con);
 
 ?>
