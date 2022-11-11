@@ -1,7 +1,7 @@
 <?php
 require_once "../../php-partials/auth.php";
 
-if($_SESSION['admin']===10  || $_SESSION['admin']===4){
+if($_SESSION['admin']<= 10 && $_SESSION['admin']>=7 || $_SESSION['admin'] === 4){
 	include("../../Pantalla_Error.php");
 	PantallaError("../../public/assets/UABC_crop.png","LO SENTIMOS, PERO USTED NO PUEDE ESTAR EN ESTA PAGINA","No cuenta con los permisos necesarios para acceder a esta página.",2);
 	exit();
@@ -11,18 +11,12 @@ if($_SESSION['admin']===10  || $_SESSION['admin']===4){
 	exit();
 }
 
-include "../../php-partials/connect.php";
-
-$sql = "SELECT * FROM intercambio_estudiantil_entrada WHERE ID = ${_GET["id"]}";
-//$query = mysqli_query($con, $sql);
-//$res = mysqli_fetch_array($query);
-
-if ($query = mysqli_query($con, $sql)) {
-	$res = mysqli_fetch_array($query);
-} else {
-	echo "ERROR: Could not able to execute $sql. " . mysqli_error($con);
-}
-mysqli_close($con);
+include "../../querys/querysAdmins.php";
+$query = queryRegister(
+	'intercambio_estudiantil_entrada',
+	'ID',
+	$_GET["id"]);
+$res = mysqli_fetch_array($query);
 
 ?>
 <!doctype html>
@@ -36,17 +30,6 @@ mysqli_close($con);
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 		<link rel="stylesheet" href="../../public/css/style.css">
 		<link rel="stylesheet" href="../../public/css/coloresOficiales.css">
-		<style>
-			#btn_aplicarCambios2, #btn_aplicarCambios1, #btn_activar_edicion{
-				background: #00723e;
-				font-weight: 500;
-				color: white;
-				border-color: #00723e;
-				box-shadow: 0px 6px 6px #b6b6b6;
-				border-radius: 4px;
-				padding: 5px 8px 5px 8px;
-			}
-		</style>
 	</head>
 
 	<body>
@@ -69,22 +52,16 @@ mysqli_close($con);
 
 					<div class="container">
 
-						<form id="formulario" action="../../php-partials/update.php" method="post" autocomplete="off">
+						<form id="formulario" action="../../php-partials/updateStudentVisitMovility.php" method="post" autocomplete="off">
 
 							<div class="d-flex row align-items-centeer align-self-stretch ">
-								<div class="col-sm-4">
+								<div class="col-sm-6">
 									<div class="d-flex justify-content-center p-1">
-										<button type="button" class="btn btn-outline-primary" id="btn_activar_edicion" <?php if ($_SESSION["admin"] == 4) echo "disabled"; ?>>Editar</button>
+										<button type="submit" class="btn btn-outline-primary" name="btn_aplicarCambios_intercambio_entrada" id="btnExportar" onclick="return confirmarAplicarCambios()">Aplicar Cambios</button>
 									</div>
 								</div>
 
-								<div class="col-sm-4">
-									<div class="d-flex justify-content-center p-1">
-										<button type="submit" class="btn btn-outline-primary" style="display: none;" name="btn_aplicarCambios_intercambio_entrada" id="btn_aplicarCambios1" onclick="return confirmarAplicarCambios()">Aplicar Cambios</button>
-									</div>
-								</div>
-
-								<div class="col-sm-4">
+								<div class="col-sm-6">
 									<div class="d-flex justify-content-center p-1">
 										<button type="button" class="btn btn-danger" name="btn_eliminar" id="btn_eliminar" onclick="return confirmarBorrar()" <?php if ($_SESSION["admin"] == 4) echo "disabled"; ?>>Eliminar</button>
 									</div>
@@ -108,57 +85,81 @@ mysqli_close($con);
 							</div>
 
 							<div class="row mb-3">
-								<label for="matricula" class="col-sm-3 col-form-label" style="text-align: right;">ID</label>
+								<label for="registro" class="col-sm-3 col-form-label" style="text-align: right;">Registro</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control border border-secondary" name="registro" id="registro" value="<?php echo $res["ID"]; ?>" readonly>
+								</div>
+							</div>
+
+							<div class="row mb-3">
+								<label for="matricula" class="col-sm-3 col-form-label" style="text-align: right;">ID / Matricula</label>
 								<div class="col-sm-6">
 									<input type="number" min="0" max="999999" class="form-control border border-secondary" name="matricula" id="matricula" value="<?php echo $res["ESTUDIANTE_ID"]; ?>" readonly>
 								</div>
 								<div class="col-sm-2">
-									<a class="btn btn-outline-secondary" href="actualizar_estudiante.php?id=<?php echo $res["ESTUDIANTE_ID"]; ?>" role="button">Consultar</a>
+									<a class="btn btn-outline-secondary" href="actualizar_estudiante.php?id=<?php echo $res["ESTUDIANTE_ID"]; ?>" role="button">VER PERFIL DEL ESTUDIANTE</a>
 								</div>
 							</div>
-
-							<hr />
 
 							<div class="row mb-3">
-								<label for="periodo" class="col-sm-3 col-form-label" style="text-align: right;">Periodo Escolar</label>
+								<label for="nivel" class="col-sm-3 col-form-label" style="text-align: right;">Nivel académico</label>
 								<div class="col-sm-6">
-									<input type="number" min="0" max="99999" class="form-control border border-secondary" name="periodo" id="periodo" value="<?php echo $res["PERIODO_ID"]; ?>" disabled>
+									<select class="form-control border border-secondary bg-light" name="nivel" id="nivel" selected="<?php echo $res["NIVEL_ID"]; ?>" required>
+										<?php if($res["NIVEL_ID"] == 1 ){?>
+											<option value="1">Licenciatura</option>
+											<option value="2">Especialidad</option>
+											<option value="3">Maestría</option>
+											<option value="4">Doctorado</option>
+										<?php } else if($res["NIVEL_ID"] == 2){ ?> 
+											<option value="2">Especialidad</option>
+											<option value="3">Maestría</option>
+											<option value="4">Doctorado</option>
+											<option value="1">Licenciatura</option>
+										<?php } else if($res["NIVEL_ID"] == 3){ ?> 
+											<option value="3">Maestría</option>
+											<option value="4">Doctorado</option>
+											<option value="1">Licenciatura</option>
+											<option value="2">Especialidad</option>
+										<?php } else if($res["NIVEL_ID"] == 4){ ?> 
+											<option value="4">Doctorado</option>
+											<option value="1">Licenciatura</option>
+											<option value="2">Especialidad</option>
+											<option value="3">Maestría</option>
+										<?php } ?>
+									</select>
 								</div>
 							</div>
-
-
 							<hr />
 
-
-							<div class="row mb-3 justify-content-md-center">
+							<div class="row mb-1 mt-3 justify-content-md-center">
 								<h6>Unidad Emisora</h6>
 							</div>
 
 							<div class="row mb-3">
 								<label for="unidad_emisora_nombre" class="col-sm-3 col-form-label" style="text-align: right;">Nombre</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control border border-secondary" name="unidad_emisora_nombre" id="unidad_emisora_nombre" value="<?php echo $res["UE"]; ?>" disabled>
+									<input type="text" class="form-control border border-secondary bg-light" name="unidad_emisora_nombre" id="unidad_emisora_nombre" value="<?php echo $res["UE"]; ?>" >
 								</div>
 							</div>
 
 							<div class="row mb-3">
 								<label for="unidad_emisora_pais" class="col-sm-3 col-form-label" style="text-align: right;">País</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control border border-secondary" name="unidad_emisora_pais" id="unidad_emisora_pais" value="<?php echo $res["UE_PAIS"]; ?>" disabled>
+									<input type="text" class="form-control border border-secondary bg-light" name="unidad_emisora_pais" id="unidad_emisora_pais" value="<?php echo $res["UE_PAIS"]; ?>" >
 								</div>
 							</div>
 
 							<div class="row mb-3">
 								<label for="unidad_emisora_entidad" class="col-sm-3 col-form-label" style="text-align: right;">Entidad</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control border border-secondary" name="unidad_emisora_entidad" id="unidad_emisora_entidad" value="<?php echo $res["UE_ENTIDAD"]; ?>" disabled>
+									<input type="text" class="form-control border border-secondary bg-light" name="unidad_emisora_entidad" id="unidad_emisora_entidad" value="<?php echo $res["UE_ENTIDAD"]; ?>" >
 								</div>
 							</div>
 
 							<div class="row mb-3">
 								<label for="unidad_emisora_idioma" class="col-sm-3 col-form-label" style="text-align: right;">Idioma</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control border border-secondary" name="unidad_emisora_idioma" id="unidad_emisora_idioma" value="<?php echo $res["UE_IDIOMA"]; ?>" disabled>
+									<input type="text" class="form-control border border-secondary bg-light" name="unidad_emisora_idioma" id="unidad_emisora_idioma" value="<?php echo $res["UE_IDIOMA"]; ?>" >
 								</div>
 							</div>
 
@@ -172,10 +173,10 @@ mysqli_close($con);
 							<div class="row mb-3">
 								<label for="finan_recibio" class="col-sm-3 col-form-label" style="text-align: right;">¿Recibió?</label>
 								<div class="col-sm-6">
-									<select class="form-control border border-secondary" name="finan_recibio" id="finan_recibio" disabled>
+									<select class="form-control border border-secondary bg-light" name="finan_recibio" id="finan_recibio" >
 										<option value="" <?php if ($res["FINAN_ID"] == "") echo "selected"; ?>>----------</option>
-										<option value="1" <?php if ($res["FINAN_ID"] == "1") echo "selected"; ?>>Sí</option>
-										<option value="2" <?php if ($res["FINAN_ID"] == "2") echo "selected"; ?>>No</option>
+										<option value="1" <?php if ($res["FINAN_VAL"] > "1") echo "selected"; ?>>Sí</option>
+										<option value="2" <?php if ($res["FINAN_VAL"] == "1") echo "selected"; ?>>No</option>
 									</select>
 								</div>
 							</div>
@@ -183,7 +184,7 @@ mysqli_close($con);
 							<div class="row mb-3">
 								<label for="finan_monto" class="col-sm-3 col-form-label" style="text-align: right;">Monto</label>
 								<div class="col-sm-6">
-									<input type="number" min="0" max="99999" class="form-control border border-secondary" name="finan_monto" id="finan_monto" value="<?php echo $res["FINAN_VAL"]; ?>" disabled>
+									<input type="number" min="0" max="99999" class="form-control border border-secondary bg-light" name="finan_monto" id="finan_monto" value="<?php echo $res["FINAN_VAL"]; ?>" >
 								</div>
 							</div>
 
@@ -196,24 +197,82 @@ mysqli_close($con);
 							<div class="row mb-3">
 								<label for="fecha_inicial" class="col-sm-3 col-form-label" style="text-align: right;">Inicial</label>
 								<div class="col-sm-6">
-									<input type="date" class="form-control border border-secondary" name="fecha_inicial" id="fecha_inicial" value="<?php echo $res["DATE_START"]; ?>" disabled>
+									<input type="date" class="form-control border border-secondary bg-light" name="fecha_inicial" id="fecha_inicial" value="<?php echo $res["DATE_START"]; ?>" >
 								</div>
 							</div>
 
 							<div class="row mb-3">
 								<label for="fecha_terminal" class="col-sm-3 col-form-label" style="text-align: right;">Terminal</label>
 								<div class="col-sm-6">
-									<input type="date" class="form-control border border-secondary" name="fecha_terminal" id="fecha_terminal" value="<?php echo $res["DATE_END"]; ?>" disabled>
+									<input type="date" class="form-control border border-secondary bg-light" name="fecha_terminal" id="fecha_terminal" value="<?php echo $res["DATE_END"]; ?>" >
+								</div>
+							</div>
+							<div class="row mb-3">
+								<label for="periodo" class="col-sm-3 col-form-label" style="text-align: right;">Periodo Escolar</label>
+								<div class="col-sm-6">
+									<input class="form-control border border-secondary bg-light" name="periodo" placeholder="seleccione primero las fechas" value="<?php echo $res['PERIODO']; ?>" id="periodo" required>
+								</div>
+							</div>
+							<div class="row mb-3 mt-5 justify-content-md-center">
+								<h6>Datos del receptor</h6>
+							</div>
+
+							<div class="row mb-3">
+								<label for="unidad_emisora" class="col-sm-3 col-form-label" style="text-align: right;">Campus</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control border border-secondary" name="unidad_receptora" id="unidad_receptora" value="<?php  echo $res["CAMPUS_DESC"]; ?>" readonly>
+								</div>
+							</div>
+							<div class="row mb-3">
+								<label for="facultad_receptora" class="col-sm-3 col-form-label" style="text-align: right;">Facultad</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control border border-secondary" name="facultad_receptora" id="facultad_receptora" value="<?php  echo $res["UNIDAD"]; ?>" readonly>
+								</div>
+							</div>
+							<div class="row mb-3 justify-content-md-center">
+								<h6 class="p-0 m-0 mt-5">Programa Educativo de llegada</h6>
+							</div>
+
+							<div class="row mb-3">
+								<label for="programa_clave" class="col-sm-3 col-form-label" style="text-align: right;">Clave</label>
+								<div class="col-sm-6">
+									<input type="number" min="1" max="999" value="<?php  echo $res["PROGRAMA_ID"]; ?>" class="form-control border border-secondary bg-light" name="programa_clave" id="programa_clave" required>
 								</div>
 							</div>
 
+							<div class="row mb-3">
+								<label for="programa_nombre" class="col-sm-3 col-form-label" style="text-align: right;">Nombre</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control border border-secondary bg-light" value="<?php echo $res["PROGRAMA_DESC"]; ?>" name="programa_nombre" id="programa_nombre" required>
+								</div>
+							</div>
+
+							<div class="row mb-3 justify-content-md-center">
+								<h6 class="p-0 m-0 mt-5"> Área de conocimiento </h6>
+							</div>
+
+							<div class="row mb-3">
+								<label for="area_clave" class="col-sm-3 col-form-label" style="text-align: right;">Clave</label>
+								<div class="col-sm-6">
+									<input type="number" min="1" max="9" class="form-control border border-secondary bg-light" name="area_clave" id="area_clave" value="<?php echo $res["AREA_ID"]; ?>" required>
+								</div>
+							</div>
+
+							<div class="row mb-3">
+								<label for="area_nombre" class="col-sm-3 col-form-label" style="text-align: right;">Nombre</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control border border-secondary bg-light" name="area_nombre" id="area_nombre" value="<?php  echo $res["AREA"]; ?>" required>
+								</div>
+							</div>
 							<hr />
 
 							<div class="row mb-3 justify-content-md-center">
-								<button type="submit" class="btn btn-outline-primary" style="display: none;" name="btn_aplicarCambios_intercambio_entrada" id="btn_aplicarCambios2" onclick="return confirmarAplicarCambios()">Aplicar Cambios</button>
+								<button type="submit" class="btn btn-outline-primary" name="btn_aplicarCambios_intercambio_entrada" id="btnExportar" onclick="return confirmarAplicarCambios()">Aplicar Cambios</button>
 							</div>
+
+
 						</form>
-						<a href="#" onclick="return show('Page2','Page1');">Show page 2</a>
+						
 
 					</div>
 				</div>
@@ -364,51 +423,7 @@ mysqli_close($con);
 
 		});
 
-const btn_activar_edicion = document.getElementById("btn_activar_edicion");
 
-btn_activar_edicion.addEventListener("click", () => {
-
-	if (document.getElementById("periodo").disabled === true) {
-
-				//document.getElementById("matricula").disabled = false;
-
-				//document.getElementById("campus_clave").disabled = false;
-				//document.getElementById("campus_nombre").disabled = false;
-
-				//document.getElementById("unidad_clave").disabled = false;
-				//document.getElementById("unidad_nombre").disabled = false;
-
-				//document.getElementById("programa_clave").disabled = false;
-				//document.getElementById("programa_nombre").disabled = false;
-				//document.getElementById("area_clave").disabled = false;
-				//document.getElementById("area_nombre").disabled = false;
-
-				document.getElementById("periodo").disabled = false;
-				//document.getElementById("nivel").disabled = false;
-
-				document.getElementById("unidad_emisora_nombre").disabled = false;
-				document.getElementById("unidad_emisora_pais").disabled = false;
-				document.getElementById("unidad_emisora_entidad").disabled = false;
-				document.getElementById("unidad_emisora_idioma").disabled = false;
-
-				document.getElementById("finan_recibio").disabled = false;
-				document.getElementById("finan_monto").disabled = false;
-
-				document.getElementById("fecha_inicial").disabled = false;
-				document.getElementById("fecha_terminal").disabled = false;
-
-				document.getElementById("btn_aplicarCambios1").style.display = 'block';
-				document.getElementById("btn_aplicarCambios2").style.display = 'block';
-
-				btn_activar_edicion.classList = "btn btn-outline-dark";
-				btn_activar_edicion.innerHTML = "Descartar Cambios";
-
-			} else {
-				if (confirm('¿Estás seguro que quieres descartar los cambios que se han hecho?')) {
-					location.reload();
-				}
-			}
-		});
 
 function show(shown, hidden) {
 	document.getElementById(shown).style.display = 'block';

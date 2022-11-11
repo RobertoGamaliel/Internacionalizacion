@@ -109,8 +109,6 @@
     	${sexo_id}, ${sexo}, ${discapacidad}, ${hablante_indigena}, ${origen_indigena},
     	${ue}, ${ue_pais}, ${ue_entidad}, ${ue_idioma}, ${finan_id}, ${finan_val}, ${date_start}, ${date_end})";
 
-    //Abrimos una conexion con la base de datos
-
     //Ejecutamos la sentencia sql
     if (mysqli_query($con, $sql)) {
     	//si se realiza de manera exitosa, borramos el registro temporal

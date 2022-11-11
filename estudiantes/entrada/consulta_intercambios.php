@@ -2,7 +2,7 @@
 
 require_once "../../php-partials/auth.php";
 
-if($_SESSION['admin']===10){
+if($_SESSION['admin'] >= 7 && $_SESSION['admin'] <= 10){
     include("../../Pantalla_Error.php");
     PantallaError("../../public/assets/UABC_crop.png","LO SENTIMOS, PERO USTED NO PUEDE ESTAR EN ESTA PAGINA","No cuenta con los permisos necesarios para acceder a esta página.",2);
     exit();
@@ -12,26 +12,12 @@ if($_SESSION['admin']===10){
     exit();
 }
 
-include "../../php-partials/connect.php";
+include "../../querys/querysAdmins.php";
+if (!$query = studentsVisitors()) {
+    PantallaError("../../public/assets/UABC_crop.png","OCURRIÓ UN PROBLEMA","No fue posible acceder a los archivos.",2);
+    exit();
+} 
 
-//Administrador Mexicali
-if ($_SESSION["admin"] == 1)
-    $sql = "SELECT i.* FROM intercambio_estudiantil_entrada i, estudiantes_entrada e WHERE e.ESTUDIANTE_ID=i.ESTUDIANTE_ID AND e.CAMPUS_ID=1";
-//Administrador Tijuana
-else if ($_SESSION["admin"] == 2)
-    $sql = "SELECT i.* FROM intercambio_estudiantil_entrada i, estudiantes_entrada e WHERE e.ESTUDIANTE_ID=i.ESTUDIANTE_ID AND e.CAMPUS_ID=2";
-//Administrador Ensenada
-else if ($_SESSION["admin"] == 3)
-    $sql = "SELECT i.* FROM intercambio_estudiantil_entrada i, estudiantes_entrada e WHERE e.ESTUDIANTE_ID=i.ESTUDIANTE_ID AND e.CAMPUS_ID=3";
-//Administrador General o Super Usuario 
-else if ($_SESSION["admin"] == 4 || $_SESSION["admin"] == 5)
-    $sql = "SELECT i.*, e.* FROM intercambio_estudiantil_entrada i, estudiantes_entrada e WHERE e.ESTUDIANTE_ID=i.ESTUDIANTE_ID";
-
-
-if ($query = mysqli_query($con, $sql)) {
-    //$res = mysqli_fetch_array($query);
-} else
-    echo "ERROR: Could not able to execute $sql. " . mysqli_error($con);
 
 ?>
 <!doctype html>
@@ -68,50 +54,92 @@ if ($query = mysqli_query($con, $sql)) {
                 <div class="d-flex flex-column col-12 justify-content-center d-flex align-items-center m-2 p-0">
                     <div class="overflow-auto align-self-stretch  m-0 p-0 ">
                         <!-- Tablas de Datos  -->
-                        <table id="tabla" class="table table-bordered table-hover" style="width:100%">
+                        <table id="tabla" class="table table-bordered table-hover" style="width:max-content;">
                             <thead>
                                 <tr>
                                     <th scope="col">ID</th>
-                                    <th scope="col">INTERCAMBIO_ID</th>
-                                    <th scope="col">PERIODO</th>
-                                    <th scope="col">UNIDAD EMISORA</th>
-                                    <th scope="col">PAÍS DE UNIDAD EMISORA</th>
-                                    <th scope="col">IDIOMA DE UNIDAD EMISORA</th>
+                                    <th scope="col">MATRICULA</th>
+                                    <th scope="col">NOMBRE</th>
+                                    <th scope="col">APELLIDO PATERNO</th>
+                                    <th scope="col">APELLIDO MATERNO</th>
                                     <th scope="col">FECHA INICIO</th>
-                                    <th scope="col">FECHA TERMINAL</th>
+                                    <th scope="col">FECHA FINAL</th>
+                                    <th scope="col">PERIODO</th>
+                                    <th scope="col">NIVEL DE ESTUDIOS</th>
+                                    <th scope="col">PAIS EMISOR</th>
+                                    <th scope="col">UNIDAD EMISORA</th>
+                                    <th scope="col">ENTIDAD EMISORA</th>
+                                    <th scope="col">IDIOMA</th>
+                                    <th scope="col">CAMPUS RECEPTOR</th>
+                                    <th scope="col">FACULTAD RECEPTORA</th>
+                                    <th scope="col">PROGRAMA EDUCATIVO</th>
+                                    <th scope="col">ÁREA DE CONOCIMIENTO</th>
+                                    <th scope="col">MONTO FINANCIACIÓN</th>
+                                    <th scope="col">SEXO</th>
+                                    <th scope="col">DISCAPACIDAD</th>
+                                    <th scope="col">LENGUA INDIGENA</th>
+                                    <th scope="col">ORIGEN INDIGENA</th>
 
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($qq = mysqli_fetch_array($query)) {
-                                    //$result = mysqli_query($con, "SELECT * from unidades_academicas WHERE ID='" . $qq["UNIDAD_ID"] . "'");
-                                    //$unit = mysqli_fetch_array($result); 
-                                ?>
-
+                                <?php while ($qq = mysqli_fetch_array($query)) {?>
                                     <tr>
-
-                                        <th scope="row"> <?php echo $qq["ESTUDIANTE_ID"]; ?> </th>
-                                        <td> <?php echo $qq["ID"]; ?> </td>
-                                        <td> <?php echo $qq["PERIODO_ID"]; ?> </td>
-                                        <td> <?php echo $qq["UE"]; ?> </td>
-                                        <td> <?php echo $qq["UE_PAIS"]; ?> </td>
-                                        <td> <?php echo $qq["UE_IDIOMA"]; ?> </td>
+                                        <th> <?php echo $qq["ID"]; ?> </th>
+                                        <th> <?php echo $qq["ESTUDIANTE_ID"]; ?> </th>
+                                        <td> <?php echo $qq["ESTUDIANTE"]; ?> </td>
+                                        <td> <?php echo $qq["ESTUDIANTE_APELLIDO1"]; ?> </td>
+                                        <td> <?php echo $qq["ESTUDIANTE_APELLIDO2"]; ?> </td>
                                         <td> <?php echo $qq["DATE_START"]; ?> </td>
                                         <td> <?php echo $qq["DATE_END"]; ?> </td>
+                                        <td> <?php echo $qq["PERIODO"]; ?> </td>
+                                            <!--Nivel de estudios-->
+                                        <td>   
+                                            <?php if ($qq["NIVEL_ID"] == 1) echo "Licenciatura"; 
+                                             else if ($qq["NIVEL_ID"] == 2) echo "Especialidad"; 
+                                             else if ($qq["NIVEL_ID"] == 3) echo "Maestría"; 
+                                             else if ($qq["NIVEL_ID"] == 4) echo "Doctorado"; ?>
+                                        <td> <?php echo $qq["UE_PAIS"]; ?> </td>
+                                        <td> <?php echo $qq["UE"]; ?> </td>
+                                        <td> <?php echo $qq["UE_ENTIDAD"]; ?> </td>
+                                        <td> <?php echo $qq["UE_IDIOMA"]; ?> </td>
+                                        <td> <?php echo $qq["CAMPUS_DESC"]; ?> </td>
+                                        <td> <?php echo $qq["UNIDAD"]; ?> </td>
+                                        <td> <?php echo $qq["PROGRAMA_DESC"]; ?> </td>
+                                        <td> <?php echo $qq["AREA"]; ?> </td>
+                                        <td> <?php echo ($qq["FINAN_VAL"] > 1)? "$" . $qq["FINAN_VAL"] : "Sin financiación" ?> </td>
+                                        <td> <?php echo $qq["SEXO"]; ?> </td>
+                                        <td> <?php echo ($qq["DISCAPACIDAD"] == 1)? 'SI':'NO'; ?> </td>
+                                        <td> <?php echo ($qq["HABLANTE_INDIGENA"] == 1)? 'SI':'NO'; ?> </td>
+                                        <td> <?php echo ($qq["ORIGEN_INDIGENA"] == 1)? 'SI':'NO'; ?> </td>
+
                                     </tr>
-                                <?php }
-                                mysqli_close($con); ?>
+                                <?php } ?>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th scope="col">ID</th>
-                                    <th scope="col">INTERCAMBIO_ID</th>
-                                    <th scope="col">PERIODO</th>
-                                    <th scope="col">UNIDAD EMISORA</th>
-                                    <th scope="col">PAÍS DE UNIDAD EMISORA</th>
-                                    <th scope="col">IDIOMA DE UNIDAD EMISORA</th>
+                                    <th scope="col">MATRICULA</th>
+                                    <th scope="col">NOMBRE</th>
+                                    <th scope="col">APELLIDO PATERNO</th>
+                                    <th scope="col">APELLIDO MATERNO</th>
                                     <th scope="col">FECHA INICIO</th>
-                                    <th scope="col">FECHA TERMINAL</th>
+                                    <th scope="col">FECHA FINAL</th>
+                                    <th scope="col">PERIODO</th>
+                                    <th scope="col">NIVEL DE ESTUDIOS</th>
+                                    <th scope="col">PAIS EMISOR</th>
+                                    <th scope="col">UNIDAD EMISORA</th>
+                                    <th scope="col">ENTIDAD EMISORA</th>
+                                    <th scope="col">IDIOMA</th>
+                                    <th scope="col">CAMPUS RECEPTOR</th>
+                                    <th scope="col">FACULTAD RECEPTORA</th>
+                                    <th scope="col">PROGRAMA EDUCATIVO</th>
+                                    <th scope="col">PROGRAMA EDUCATIVO</th>
+                                    <th scope="col">MONTO FINANCIACIÓN</th>
+                                    <th scope="col">SEXO</th>
+                                    <th scope="col">DISCAPACIDAD</th>
+                                    <th scope="col">LENGUA INDIGENA</th>
+                                    <th scope="col">ORIGEN INDIGENA</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -142,9 +170,7 @@ if ($query = mysqli_query($con, $sql)) {
 
     <!--datatables javascript Bootstrap 5 -->
     <script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap5.js"></script>
-    <!--datatables javascript Bootstrap 4
-	<script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.js"></script>-->
-
+    
     <!--links para exportar a excel -->
     <script src="https://unpkg.com/xlsx@0.16.9/dist/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/file-saverjs@latest/FileSaver.min.js"></script>
@@ -158,8 +184,8 @@ if ($query = mysqli_query($con, $sql)) {
         $btnExportar.addEventListener("click", function() {
             let tableExport = new TableExport($tabla, {
                 exportButtons: false, // No queremos botones
-                filename: "Academicos_visitantes", //Nombre del archivo de Excel
-                sheetname: "Academicos_Visitantes", //Título de la hoja
+                filename: "Movilidad_estudiantes_visitantes", //Nombre del archivo de Excel
+                sheetname: "Movilidad_estudiantes_Visitantes", //Título de la hoja
             });
             let datos = tableExport.getExportData();
             let preferenciasDocumento = datos.tabla.xlsx;
@@ -173,12 +199,14 @@ if ($query = mysqli_query($con, $sql)) {
             // Se le asigna los diferentes campos en el pie de la tabla para las busquedas
             $('#tabla tfoot th').each(function() {
                 var title = $(this).text();
-                console.log(title);
-
+                console.log( `titulo ${title}`);
                 if (title == "ID") {
-                    $(this).html('<input class="form-control" type="number" min="0" max="999999" placeholder="Search ' + title + '" />');
+                    $(this).html('<input class="form-control" type="number" min="0" max="999999" placeholder="BUSCAR ' + title + '" />');
                 }
-                /*else if (title == "NIVEL DE ESTUDIOS") {
+                else if (title == "PERIODO") {
+                    $(this).html('<input class="form-control" type="number" min="1" max="2" placeholder="BUSCAR' + title + '" />');
+                }
+                else if (title == "NIVEL DE ESTUDIOS") {
                     $(this).html(`<select class="form-control">
                                     <option value="">--Selecciona Nivel--</option>
                                     <option value="Licenciatura">Licenciatura</option>
@@ -186,22 +214,22 @@ if ($query = mysqli_query($con, $sql)) {
                                     <option value="Maestría">Maestría</option>
                                     <option value="Doctorado">Doctorado</option>
                                 </select>`);
-                }*/
-                else if (title == "CAMPUS") {
+                }
+                else if (title == "CAMPUS RECEPTOR") {
                     $(this).html(`<select class="form-control" name="campus_clave" id="campus_clave">
 								    <option value="">----------</option>
 								    <option value="MEXICALI">MEXICALI</option>
 								    <option value="TIJUANA">TIJUANA</option>
 								    <option value="ENSENADA">ENSENADA</option>
 							    </select>`);
-                } else if (title == "UNIDAD ACADÉMICA") {
+                } else if (title == "FACULTAD RECEPTORA") {
                     $(this).html(`<select class="form-control" name="unidad_clave" id="unidad_clave">
 								    <option value="">----------</option>
 							    </select>`);
-                } else if (title == "FECHA INICIO" || title == "FECHA TERMINAL") {
+                } else if (title == "FECHA INICIO" || title == "FECHA FINAL") {
                     $(this).html('<input type="date" class="form-control" />');
                 } else {
-                    $(this).html('<input class="form-control" type="text" placeholder="Search ' + title + '" />');
+                    $(this).html('<input class="form-control" type="text" placeholder="BUSCAR ' + title + '" />');
                 }
             });
 
@@ -285,36 +313,27 @@ if ($query = mysqli_query($con, $sql)) {
             //funcion de busquedas
             var table = $('#tabla').DataTable({
                 initComplete: function() {
-
                     //Se aplica la busqueda
                     this.api().columns().every(function() {
                         var that = this;
-
                         //Si el campo es un input
                         $('input', this.footer()).on('keyup change clear', function() {
                             if (that.search() !== this.value) {
-                                that
-                                    .search(this.value)
-                                    .draw();
+                                that.search(this.value).draw();
                             }
                         });
-
 
                         //Si el campo es un select
                         $('select', this.footer()).on('keyup change clear', function() {
                             if (that.search() !== this.value) {
-                                that
-                                    .search(this.value)
-                                    .draw();
+                                that.search(this.value).draw();
                             }
                         });
 
                         //Si el campo es un date
                         $('date', this.footer()).on('keyup change clear', function() {
                             if (that.search() !== this.value) {
-                                that
-                                    .search(this.value)
-                                    .draw();
+                                that.search(this.value).draw();
                             }
                         });
 
@@ -570,13 +589,16 @@ if ($query = mysqli_query($con, $sql)) {
                     "visible": false
                 }]
             });
-
+            <?php if($_SESSION['admin'] ===1 || $_SESSION['admin'] === 2 || $_SESSION['admin'] === 3 || $_SESSION['admin'] === 5){?>
             $('#tabla tbody').on('click', 'tr', function() {
+                
                 var data = table.row(this).data();
-                window.location.href = "actualizar_intercambio.php?id=" + data[1];
+                window.location.href = "actualizar_intercambio.php?id=" + data[0];
                 //data[1] es el valor en la segunda columna del renglon, osea el id
                 //del intercambio del renglon seleccionado
-            });
+           
+            }); 
+            <?php } ?>
         });
     </script>
 </body>

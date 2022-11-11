@@ -13,6 +13,7 @@ if($_SESSION['admin']<=0||$_SESSION['admin']>=6){
 include "../../querys/querysAdmins.php";
 if (!$query = requestStudentVisitor()) {
 	PantallaError("../../public/assets/UABC_crop.png","OCURRIÓ UN PROBLEMA","No fue posible acceder a los archivos.",2);
+    exit();
 } 
 
 ?>
@@ -49,7 +50,7 @@ if (!$query = requestStudentVisitor()) {
                 <div class="d-flex flex-column col-12 justify-content-center d-flex align-items-center m-2 p-0">
                     <div class="overflow-auto align-self-stretch  m-0 p-0 " >
             			<!-- Tablas de Datos  -->
-            			<table id="tabla" class="table table-bordered table-hover" style="width:150%">
+            			<table id="tabla" class="table table-bordered table-hover" style="width:max-content;">
             				<thead>
             					<tr>
             						<th scope="col">ID</th>
@@ -178,8 +179,8 @@ if (!$query = requestStudentVisitor()) {
 		$btnExportar.addEventListener("click", function() {
 			let tableExport = new TableExport($tabla, {
 				exportButtons: false, // No queremos botones
-				filename: "Academicos_visitantes", //Nombre del archivo de Excel
-				sheetname: "Academicos_Visitantes", //Título de la hoja
+				filename: "Solicitudes_estudiantes_visitantes", //Nombre del archivo de Excel
+				sheetname: "Solicitudes_estudiantes_Visitantes", //Título de la hoja
 			});
 			let datos = tableExport.getExportData();
 			let preferenciasDocumento = datos.tabla.xlsx;
@@ -214,36 +215,27 @@ if (!$query = requestStudentVisitor()) {
 			//funcion de busquedas
 			var table = $('#tabla').DataTable({
 				initComplete: function() {
-
 					//Se aplica la busqueda
 					this.api().columns().every(function() {
 						var that = this;
-
 						//Si el campo es un input
 						$('input', this.footer()).on('keyup change clear', function() {
 							if (that.search() !== this.value) {
-								that
-									.search(this.value)
-									.draw();
+								that.search(this.value).draw();
 							}
 						});
-
 
 						//Si el campo es un select
 						$('select', this.footer()).on('keyup change clear', function() {
 							if (that.search() !== this.value) {
-								that
-									.search(this.value)
-									.draw();
+								that.search(this.value).draw();
 							}
 						});
 
 						//Si el campo es un date
 						$('date', this.footer()).on('keyup change clear', function() {
 							if (that.search() !== this.value) {
-								that
-									.search(this.value)
-									.draw();
+								that.search(this.value).draw();
 							}
 						});
 
@@ -493,15 +485,18 @@ if (!$query = requestStudentVisitor()) {
                     }
                 }
 			});
-
+            
+        <?php if($_SESSION['admin'] === 1 || $_SESSION['admin'] === 2 || $_SESSION['admin'] === 3 || $_SESSION['admin'] === 5 ) { ?>
 			//Esta funcion hace que un renglones puedan ser cickable, como links
 			$('#tabla tbody').on('click', 'tr', function() {
+                
 				var data = table.row(this).data();
 
 				window.location.href = "actualizar_temporal.php?id=" + data[0];
 				//data[0] es el valor en la primera columna del renglon, osea
 				//la ID del renglo seleccionado
 			});
+        <?php }?>
 		});
 	</script>
 

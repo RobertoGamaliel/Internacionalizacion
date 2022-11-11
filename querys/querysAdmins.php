@@ -1,6 +1,9 @@
 <?php
-//Este archivo realiza consultas a la base de datos de acuerdo al tipo de usuario. Cada funcion hace un tipo de consulta exclusiva para
+//Este archivo realiza consultas a la base de datos para revisr las solictudes temporales y aceptadas de acuerdo al tipo de usuario. Cada funcion hace un tipo de consulta exclusiva para
 //usuarios de orden administrativos con admin = 1, 2, 3, 4 y 5
+
+
+	///CONSULTAS A SOLICITUDES DE MOVILIDAD HECHAS POR NO ADMINISTRATIVOS ///
 
 	//Consulta las solicitudes de movilidad hechas por estuddiantes que desean visitar UABC
 	function requestStudentVisitor(){
@@ -30,6 +33,40 @@
 	function requestAcadUABC(){
 		$table= 'movilidad_academica_salida_temporal';
 		$queryResult = queryTable($table);
+		return $queryResult;
+		
+	}
+
+	//CONSULTAS A MOVILIDADES APROBADAS///
+
+	//Consulta las solicitudes de movilidad aprobadas para estuddiantes que desean visitar UABC
+	function studentsVisitors(){
+		$table= 'intercambio_estudiantil_entrada';
+		$queryResult = queryRegister($table,'CAMPUS_ID',$_SESSION['admin']);
+		return $queryResult;
+		
+	}
+
+	//Consulta las solicitudes de movilidad aprobadas para estuddiantes de UABC para ir a otra universidad
+	function studentsUABC(){
+		$table= 'intercambio_estudiantil_salida';
+		$queryResult = queryRegister($table,'CAMPUS_ID',$_SESSION['admin']);
+		return $queryResult;
+		
+	}
+
+	//Consulta las solicitudes de movilidad aprobadas para académicos que desan viisitar UABC
+	function academicsVisitors(){
+		$table= 'movilidad_academica_entrada';
+		$queryResult = queryRegister($table,'CAMPUS_ID',$_SESSION['admin']);
+		return $queryResult;
+		
+	}
+
+	//Consulta las solicitudes de movilidad aprobadas para académicos de UABC para ir a otra universidad
+	function academicsUABC(){
+		$table= 'movilidad_academica_salida';
+		$queryResult = queryRegister($table,'CAMPUS_ID',$_SESSION['admin']);
 		return $queryResult;
 		
 	}

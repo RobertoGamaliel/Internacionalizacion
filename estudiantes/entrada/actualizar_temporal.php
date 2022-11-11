@@ -72,7 +72,7 @@ $res = mysqli_fetch_array($query);
 								</div>
 							</div>
 						</div>
-					<?php } ?>
+						<?php } ?>
 					<hr />
 
 					<div class="row mb-3 justify-content-md-center">
@@ -375,7 +375,10 @@ $res = mysqli_fetch_array($query);
 		function confirmarBorrar() {
 			var id = document.getElementById("identificador").value;
 			if (confirm('¿Estás seguro que quieres eliminar el autorregistro del estudiante de ID ' + id + '?')) {
-				window.location.href = "../../php-partials/self_registration.php?tabla=entrada&id=" + id;
+				
+				<?php deleteRegister('intercambio_estudiantil_entrada_temporal','ESTUDIANTE_ID',$_GET["id"]);?>
+				window.history.back();
+
 			} else {
 				return false;
 			}

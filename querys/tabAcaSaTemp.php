@@ -1,3 +1,4 @@
+
 <?php
 	$solicitadas = "SELECT * FROM movilidad_academica_salida_temporal WHERE EMPLEADO_ID = ${_SESSION["matricula"]} ";
 

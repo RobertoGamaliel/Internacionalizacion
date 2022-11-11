@@ -63,7 +63,6 @@
 
     date_default_timezone_set('UTC');
     $date_solicitud = "'".date('Y-m-d')."'";
-    echo $date_solicitud;
     $sql = "INSERT INTO movilidad_academica_entrada_temporal (VISITANTE_ID, PERIODO, CAMPUS_ID, UNIDAD_ID, UE, UE_PAIS, UE_ENTIDAD, 
     UE_IDIOMA, TMA_ID, ESTADO, DATE_SOLICITUD) 
     VALUES (${id}, ${period}, ${campus_code}, ${unit_code}, ${unit_sending_name}, ${unit_sending_country},${unit_sending_state}, 

@@ -10,8 +10,6 @@
 		}
 		exit();	
 	}
-
-	include "../php-partials/connect.php";
 	require("../php-partials/consultas.php");
 ?>
 
