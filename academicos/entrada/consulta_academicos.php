@@ -12,16 +12,12 @@ if($_SESSION['admin']===10){
 }
 include "../../php-partials/connect.php";
 
-$sql = "SELECT * FROM academicos_entrada";
-//$query = mysqli_query($con, $sql);
-//$res = mysqli_fetch_array($query);
+include "../../querys/querysAdmins,php";
 
-if ($query = mysqli_query($con, $sql)) {
-    //$res = mysqli_fetch_array($query);
-} else {
-    echo "ERROR: Could not able to execute $sql. " . mysqli_error($con);
+if(!$query  = requestAcadVisitor(){
+ PantallaError("../../public/assets/UABC_crop.png","OCURRIÓ UN PROBLEMA.","No fue posible acceder a los archivos.",2);
+    exit();
 }
-mysqli_close($con);
 
 ?>
 <!doctype html>
