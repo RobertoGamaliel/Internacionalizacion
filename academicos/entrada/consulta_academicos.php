@@ -14,6 +14,20 @@ include "../../php-partials/connect.php";
 
 include "../../querys/querysAdmins,php";
 
+
+   //ADMIN MEXICALI
+if($_SESSION["admin"] == 1)
+   $sql = "SELECT * FROM academicos_entrada WHERE CAMPUS_ID = 1";
+   //ADMIN TIJUANA
+else if($_SESSION["admin"] == 2)
+   $sql = "SELECT * FROM academicos_entrada WHERE CAMPUS_ID = 2";
+   //ADMIN ENSENADA
+else if($_SESSION["admin"] == 3)
+   $sql = "SELECT * FROM academicos_entrada WHERE CAMPUS_ID = 3";
+   //ADMIN GENERAL O SUPER USER
+else if($_SESSION["admin"] == 4 || $SESSION["admin"] == 5)
+   $sql = "SELECT * FROM academicos_entrada";
+
 if(!$query  = requestAcadVisitor(){
  PantallaError("../../public/assets/UABC_crop.png","OCURRIÓ UN PROBLEMA.","No fue posible acceder a los archivos.",2);
     exit();
@@ -57,10 +71,16 @@ if(!$query  = requestAcadVisitor(){
             <div class="d-flex flex-row justify-content-center align-items-center  align-self-stretch m-0 p-0 mb-5">
                 <div class="d-flex flex-column col-12 justify-content-center d-flex align-items-center m-2 p-0">
                     <div class="overflow-auto align-self-stretch  m-0 p-0 ">
-                        <table id="tabla" class="table table-bordered table-hover p-0 m-0"  >
+                        <table id="tabla" class="table table-bordered table-hover p-0 m-0" style = "width:max-content;"  >
                             <thead>
                                 <tr>
                                     <th scope="col">ID</th>
+				    <th scope="col">Clave del periodo</th>
+				    <th scope="col">Periodo</th>
+				    <th scope="col">Clave del campus</th>
+				    <th scope="col">Nombre del campus</th>
+				    <th scope="col">Clave de la unidad</th>
+				    <th scope="col">Nombre de la unidad</th>
                                     <th scope="col">Nombre</th>
                                     <th scope="col">Apellido Paterno</th>
                                     <th scope="col">Apellido Materno</th>
@@ -68,6 +88,12 @@ if(!$query  = requestAcadVisitor(){
                                     <th scope="col">Nivel de Estudios</th>
                                     <th scope="col">Discapacidad</th>
                                     <th scope="col">Hablante Indígena</th>
+				    <th scope="col">Unidadd emisora</th>
+				    <th scope="col">País Unidad emisora</th>
+				    <th scope="col">Entidad Unidad Emisora</th>
+				    <th scope="col">Idioma Unidad Emisora</th>
+				    <th scope="col">ID Tipo de movilidad academica</th>
+				    <th scope="col">Tipo de movilidad academica</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -78,6 +104,13 @@ if(!$query  = requestAcadVisitor(){
                                         <td> <?php echo $qq["VISITANTE"]; ?> </td>
                                         <td> <?php echo $qq["VISITANTE_APELLIDO1"]; ?> </td>
                                         <td> <?php echo $qq["VISITANTE_APELLIDO2"]; ?> </td>
+					    
+					<td> <?php echo $qq["PERIODO_ID"]; ?> </td>
+					<td> <?php echo $qq["PERIODO"]; ?> </td>
+					<td> <?php echo $qq["CAMPUS_ID"]; ?> </td>
+					<td> <?php echo $qq["UNIDAD_ID"]; ?> </td>
+					<td> <?php echo $qq["UNIDAD"]; ?> </td>
+					
                                         <td>
                                             <!-- Sexo -->
                                             <?php if ($qq["SEXO_ID"] == '1') echo "Femenino" ?>
@@ -100,12 +133,35 @@ if(!$query  = requestAcadVisitor(){
                                             <?php if ($qq["HABLANTE_INDIGENA"] == '1') echo "Sí"; ?>
                                             <?php if ($qq["HABLANTE_INDIGENA"] == '2') echo "No"; ?>
                                         </td>
+					<td>
+                                            <!-- Origen Indigena -->
+                                            <?php if ($qq["HABLANTE_INDIGENA"] == '1') echo "Sí"; ?>
+                                            <?php if ($qq["HABLANTE_INDIGENA"] == '2') echo "No"; ?>
+                                        </td>
+					<td> <?php echo $qq["UE"]; ?> </td>
+					<td> <?php echo $qq["UE_ENTIDAD"]; ?> </td>
+					<td> <?php echo $qq["UE_IDIOMA"]; ?> </td>
+					<td> <?php echo $qq["TMA_ID"]; ?> </td>
+					    
+					    <!-- Clave del tipo de movilidad académica -->
+					<td> 
+						<?php if ($qq["TMA"] == '1'); echo "Docencia"; ?> 
+						<?php if ($qq["TMA"] == '2'); echo "Estancias sabáticas"; ?>
+						<?php if ($qq["TMA"] == '3'); echo "Estancia de investigación"; ?> 
+					</td>
+					    
                                     </tr>
                                 <?php } ?>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th scope="col">ID</th>
+				    <th scope="col">Clave del periodo</th>
+				    <th scope="col">Periodo</th>
+				    <th scope="col">Clave del campus</th>
+				    <th scope="col">Nombre del campus</th>
+				    <th scope="col">Clave de la unidad</th>
+				    <th scope="col">Nombre de la unidad</th>
                                     <th scope="col">Nombre</th>
                                     <th scope="col">Apellido Paterno</th>
                                     <th scope="col">Apellido Materno</th>
@@ -113,6 +169,12 @@ if(!$query  = requestAcadVisitor(){
                                     <th scope="col">Nivel de Estudios</th>
                                     <th scope="col">Discapacidad</th>
                                     <th scope="col">Hablante Indígena</th>
+				    <th scope="col">Unidadd emisora</th>
+				    <th scope="col">País Unidad emisora</th>
+				    <th scope="col">Entidad Unidad Emisora</th>
+				    <th scope="col">Idioma Unidad Emisora</th>
+				    <th scope="col">ID Tipo de movilidad academica</th>
+				    <th scope="col">Tipo de movilidad academica</th>
                                 </tr>
                             </tfoot>
                         </table>
